@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"openapi:all": "npm run openapi:tool-tracker",
-		"openapi:tool-tracker": "openapi-generator-cli generate -i  https://api.kireobat.eu/tool-tracker/v3/api-docs -g typescript-fetch -o src/lib/generated/tool-tracker --additional-properties=supportsES6=true,useSingleRequestParameter=true --skip-validate-spec"
+		"openapi:tool-tracker": "openapi-generator-cli generate -i  https://api.kireobat.eu/tool-tracker/v3/api-docs -g typescript-fetch -o src/lib/generated/tool-tracker --additional-properties=supportsES6=true,useSingleRequestParameter=true --skip-validate-spec",
+		"openapi:local": "openapi-generator-cli generate -i  http://localhost:8080/tool-tracker/v3/api-docs -g typescript-fetch -o src/lib/generated/tool-tracker --additional-properties=supportsES6=true,useSingleRequestParameter=true --skip-validate-spec"
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.8.2",

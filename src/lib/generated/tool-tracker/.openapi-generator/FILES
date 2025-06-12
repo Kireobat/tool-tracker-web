@@ -1,4 +1,4 @@
-.openapi-generator-ignore
+apis/AuthEndpointsApi.ts
 apis/DamageReportEndpointsApi.ts
 apis/FeeEndpointsApi.ts
 apis/LendingAgreementEndpointsApi.ts
@@ -31,6 +31,7 @@ models/ToolTrackerPageDtoToolServiceEventDto.ts
 models/ToolTrackerPageDtoToolTypeDto.ts
 models/ToolTrackerResponseDto.ts
 models/ToolTypeDto.ts
+models/UserDto.ts
 models/UserMapRoleDto.ts
 models/index.ts
 runtime.ts

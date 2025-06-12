@@ -13,7 +13,7 @@
  */
 
 
-export const BASE_PATH = "https://api.kireobat.eu/tool-tracker".replace(/\/+$/, "");
+export const BASE_PATH = "http://localhost:8080/tool-tracker".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path

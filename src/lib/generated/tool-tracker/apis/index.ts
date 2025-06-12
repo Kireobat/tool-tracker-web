@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './AuthEndpointsApi';
 export * from './DamageReportEndpointsApi';
 export * from './FeeEndpointsApi';
 export * from './LendingAgreementEndpointsApi';

@@ -22,4 +22,5 @@ export * from './ToolTrackerPageDtoToolServiceEventDto';
 export * from './ToolTrackerPageDtoToolTypeDto';
 export * from './ToolTrackerResponseDto';
 export * from './ToolTypeDto';
+export * from './UserDto';
 export * from './UserMapRoleDto';
