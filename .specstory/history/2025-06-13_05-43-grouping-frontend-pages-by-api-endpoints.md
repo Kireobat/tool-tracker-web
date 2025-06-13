@@ -69,7 +69,566 @@ How can I make an admin link be added to the sidebar if the user is an admin?
 
 _**Assistant**_
 
+Looking at your code, you're on the right track but there are a few issues. Here's how to fix the admin link addition:
 
+````typescript
+<script lang="ts">
+	import NavMain from "./nav-main.svelte";
+	import NavSecondary from "./nav-secondary.svelte";
+	import NavUser from "./nav-user.svelte";
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import CommandIcon from "@lucide/svelte/icons/command";
+	import ShieldIcon from "@lucide/svelte/icons/shield"; // Better icon for admin
+	import { onMount, type ComponentProps } from "svelte";
+    import { isAdmin } from "$lib/functions/auth/isAdmin";
+
+	let admin: boolean = $state(false);
+
+	// Create a reactive navMain that includes admin items when user is admin
+	let navMain = $derived(() => {
+		const baseNav = [...data.navMain];
+		
+		if (admin) {
+			baseNav.push({
+				title: "Admin",
+				url: "#",
+				icon: ShieldIcon, // Use a different icon to avoid duplication
+				items: [
+					{
+						title: "User Management",
+						url: "/app/admin/users",
+					},
+					{
+						title: "Role Management", 
+						url: "/app/admin/roles",
+					},
+					{
+						title: "System Settings",
+						url: "/app/admin/settings",
+					}
+				],
+			});
+		}
+		
+		return baseNav;
+	});
+
+	onMount(async () => {
+		admin = await isAdmin();
+		console.log("Is Admin:", admin);
+	});
+
+	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
+</script>
+````
+
+The key changes:
+
+1. **Removed the manual state management** - No need for `adminLinkAdded` flag
+2. **Used `$derived()`** instead of `$effect()` - This creates a reactive computation that automatically updates when `admin` changes
+3. **Changed the admin icon** - Used `ShieldIcon` instead of `LandmarkIcon` (which is already used for Financial Management)
+4. **Added proper admin menu items** - User Management, Role Management, etc. based on your API structure
+5. **Spread the base navigation** - `[...data.navMain]` creates a new array to avoid mutating the original
+
+Also, you might want to move the "Financial Management" section to the admin area since fees are typically admin-only:
+
+````typescript
+// In the module script section, remove Financial Management from data.navMain
+const data = $derived({
+	// ...existing code...
+	navMain: [
+		// ...existing sections...
+		// Remove the Financial Management section from here
+	],
+	// ...existing code...
+});
+
+// Then in the derived navMain:
+let navMain = $derived(() => {
+	const baseNav = [...data.navMain];
+	
+	if (admin) {
+		baseNav.push({
+			title: "Admin",
+			url: "#",
+			icon: ShieldIcon,
+			items: [
+				{
+					title: "User Management",
+					url: "/app/admin/users",
+				},
+				{
+					title: "Role Management", 
+					url: "/app/admin/roles",
+				},
+				{
+					title: "Fees Overview",
+					url: "/app/fees",
+				},
+				{
+					title: "Create Fee",
+					url: "/app/fees/create",
+				}
+			],
+		});
+	}
+	
+	return baseNav;
+});
+````
+
+This approach is more reactive and cleaner than manually managing state and effects.
+
+---
+
+_**User**_
+
+Can you adapt the pagination thing in the current file so that it works with my pagination?
+
+---
+
+_**Assistant**_
+
+Looking at your code, I can see several issues with the pagination implementation. Here's how to fix it:
+
+````svelte
+<script lang="ts">
+    import DataTable from "./data-table.svelte";
+    import { columns } from "./columns.js";
+    import type { ToolDto, ToolDtoStatusEnum, ToolTrackerPageDtoToolDto } from "$lib/generated/tool-tracker";
+    import { getTools } from "$lib/functions/get/getTools";
+    import * as Pagination from "$lib/components/ui/pagination/index.js";
+
+    interface Props {
+        data: ToolDto[]
+    }
+
+    
+    let desiredPage: number = $state(0);
+    let size: number = $state(3);
+    let sort: string[] = $state([]);
+    let name: string | undefined = $state()
+    let serial: string | undefined = $state()
+    let toolTypeId: number | undefined = $state()
+    let status: ToolDtoStatusEnum | undefined = $state()
+
+    let pageDto: ToolTrackerPageDtoToolDto | undefined = $state()
+
+    $effect(() => {
+        (async () => {
+            pageDto = await getTools(desiredPage, size, sort, name, serial, toolTypeId, status);
+        })();
+    });
+
+    // Handle page changes
+    function handlePageChange(page: number) {
+        desiredPage = page - 1; // Convert to 0-based indexing for API
+    }
+</script>
+ 
+{#if pageDto === undefined}
+    <div>Loading...</div>
+{:else}
+    <DataTable data={pageDto.page} {columns} />
+
+    {#if pageDto.totalElements > 0}
+        <Pagination.Root 
+            count={pageDto.totalElements} 
+            perPage={size} 
+            page={desiredPage + 1}
+            onPageChange={handlePageChange}
+        >
+            {#snippet children({ pages, currentPage })}
+                <Pagination.Content>
+                    <Pagination.Item>
+                        <Pagination.PrevButton />
+                    </Pagination.Item>
+                    {#each pages as page (page.key)}
+                        {#if page.type === "ellipsis"}
+                            <Pagination.Item>
+                                <Pagination.Ellipsis />
+                            </Pagination.Item>
+                        {:else}
+                            <Pagination.Item>
+                                <Pagination.Link {page} isActive={currentPage === page.value}>
+                                    {page.value}
+                                </Pagination.Link>
+                            </Pagination.Item>
+                        {/if}
+                    {/each}
+                    <Pagination.Item>
+                        <Pagination.NextButton />
+                    </Pagination.Item>
+                </Pagination.Content>
+            {/snippet}
+        </Pagination.Root>
+    {/if}
+{/if}
+````
+
+Key changes made:
+
+1. **Fixed the loading condition**: Changed `{#await pageDto != undefined}` to `{#if pageDto === undefined}` - the await block was incorrectly structured
+2. **Used actual pagination data**: 
+   - `count={pageDto.totalElements}` instead of hardcoded `100`
+   - `perPage={size}` instead of hardcoded `10`
+   - `page={desiredPage + 1}` to convert from 0-based to 1-based indexing for display
+3. **Added page change handler**: `onPageChange={handlePageChange}` to update the `desiredPage` when user clicks pagination buttons
+4. **Added conditional rendering**: Only show pagination if there are results (`pageDto.totalElements > 0`)
+5. **Proper page conversion**: The `handlePageChange` function converts from 1-based (UI) to 0-based (API) indexing
+
+This should now properly integrate with your backend pagination system and update the data when users navigate between pages.
+
+---
+
+_**User**_
+
+Do the same for the select component
+
+---
+
+_**Assistant**_
+
+Here's how to make the Select component work properly with your pagination:
+
+````svelte
+<script lang="ts">
+    // ...existing imports and code...
+
+    function handlePageChange(page: number) {
+        desiredPage = page - 1; // Convert to 0-based indexing for API
+    }
+
+    // Handle page size changes
+    function handlePageSizeChange(value: string | undefined) {
+        if (value) {
+            size = parseInt(value);
+            desiredPage = 0; // Reset to first page when changing page size
+        }
+    }
+
+    const pageSizeOptions = [
+        { value: "5", label: "5" },
+        { value: "10", label: "10" },
+        { value: "20", label: "20" },
+        { value: "50", label: "50" },
+        { value: "100", label: "100" }
+    ];
+
+    const triggerContent = $derived(
+        pageSizeOptions.find((option) => option.value === size.toString())?.label ?? "Select page size"
+    );
+</script>
+
+{#if pageDto === undefined}
+    <div>Loading...</div>
+{:else}
+    <DataTable data={pageDto.page} {columns} />
+
+    {#if pageDto.totalItems > 0}
+        <div class="flex items-center justify-between space-x-4">
+            <Pagination.Root 
+                count={pageDto.totalItems} 
+                perPage={size} 
+                page={desiredPage + 1}
+                onPageChange={handlePageChange}
+            >
+                {#snippet children({ pages, currentPage })}
+                    <Pagination.Content>
+                        <Pagination.Item>
+                            <Pagination.PrevButton />
+                        </Pagination.Item>
+                        {#each pages as page (page.key)}
+                            {#if page.type === "ellipsis"}
+                                <Pagination.Item>
+                                    <Pagination.Ellipsis />
+                                </Pagination.Item>
+                            {:else}
+                                <Pagination.Item>
+                                    <Pagination.Link {page} isActive={currentPage === page.value}>
+                                        {page.value}
+                                    </Pagination.Link>
+                                </Pagination.Item>
+                            {/if}
+                        {/each}
+                        <Pagination.Item>
+                            <Pagination.NextButton />
+                        </Pagination.Item>
+                    </Pagination.Content>
+                {/snippet}
+            </Pagination.Root>
+            
+            <Select.Root 
+                selected={{ value: size.toString(), label: size.toString() }}
+                onSelectedChange={(selected) => handlePageSizeChange(selected?.value)}
+            >
+                <Select.Trigger class="w-[180px]">
+                    <Select.Value placeholder="Items per page" />
+                </Select.Trigger>
+                <Select.Content>
+                    {#each pageSizeOptions as option (option.value)}
+                        <Select.Item
+                            value={option.value}
+                            label={option.label}
+                        >
+                            {option.label}
+                        </Select.Item>
+                    {/each}
+                </Select.Content>
+            </Select.Root>
+        </div>
+    {/if}
+{/if}
+````
+
+Key changes made to the Select component:
+
+1. **Added `selected` prop**: Sets the current selected value based on the `size` state
+2. **Added `onSelectedChange` handler**: `handlePageSizeChange` function that updates the `size` and resets to page 0
+3. **Used `Select.Value`**: Instead of manually showing trigger content, let the component handle it
+4. **Removed `type="single"`**: Not needed for this use case
+5. **Improved layout**: Added better spacing and alignment classes
+6. **Reset page on size change**: When page size changes, reset to first page to avoid showing empty results
+7. **Better placeholder text**: Changed from "Select a fruit" to "Items per page"
+
+Now when users change the page size, it will:
+- Update the `size` variable
+- Reset to the first page (`desiredPage = 0`)
+- Trigger the `$effect` to reload data with new pagination settings
+- Show the correct selected value in the dropdown
+
+---
+
+_**User**_
+
+you're wrong, i read the docs to figure it out myself
+
+---
+
+_**Assistant**_
+
+You're absolutely right, I apologize for the confusion. I should have checked the actual documentation for your specific UI library implementation instead of making assumptions about the API. Thanks for taking the time to figure it out yourself - that's often the best way to understand how components actually work in practice.
+
+If you'd like to share what the correct implementation looks like, I'd be happy to learn from it for future reference.
+
+---
+
+_**User**_
+
+Can you help fix the status Select thing so that it is displayed and actually selected?
+
+---
+
+_**Assistant**_
+
+Looking at your status Select component, I can see a few issues. The main problem is likely that the `value` comparison isn't working correctly. Here's the fix:
+
+````svelte
+<script lang="ts">
+    // ...existing code...
+
+    function handleStatusChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            status = ToolDtoStatusEnum[value as keyof typeof ToolDtoStatusEnum];
+        } else {
+            status = undefined;
+        }
+        desiredPage = 0; // Reset to first page when changing status
+    }
+
+    // Add an option for "All" statuses
+    const statusOptions = [
+        { value: "undefined", label: "All Statuses" },
+        ...Object.values(ToolDtoStatusEnum).map((status) => ({
+            value: status.toString(),
+            label: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+        }))
+    ];
+
+    const statusTriggerContent = $derived(
+        statusOptions.find((option) => option.value === (status?.toString() ?? "undefined"))?.label ?? "Select status"
+    );
+</script>
+
+<!-- In the template -->
+<Label for="status" class="mb-1">Status</Label>
+<Select.Root type="single" value={status?.toString() ?? "undefined"} onValueChange={handleStatusChange}>
+    <Select.Trigger class="w-[180px]">
+        {statusTriggerContent}
+    </Select.Trigger>
+    <Select.Content>
+        {#each statusOptions as option (option.value)}
+            <Select.Item
+                value={option.value}
+                label={option.label}
+            >
+                {option.label}
+            </Select.Item>
+        {/each}
+    </Select.Content>
+</Select.Root>
+````
+
+Key changes:
+
+1. **Added "All Statuses" option**: This gives users a way to clear the status filter
+2. **Fixed value handling**: Use `"undefined"` string for the unselected state instead of actual `undefined`
+3. **Updated handleStatusChange**: Check for `"undefined"` string to properly handle the "All" option
+4. **Fixed statusTriggerContent**: Use `status?.toString() ?? "undefined"` to match the value properly
+5. **Added page reset**: Reset to first page when status changes
+6. **Improved value prop**: Use `status?.toString() ?? "undefined"` to ensure consistent string comparison
+
+This should fix both the display issue and the selection issue. The Select component should now properly show the selected status and allow you to change it.
+
+---
+
+_**User**_
+
+It seems stuck at All Statuses
+
+---
+
+_**Assistant**_
+
+The issue is likely with how the enum values are being compared. The problem might be that `ToolDtoStatusEnum` values aren't matching the string conversion. Let me help you debug this:
+
+````svelte
+<script lang="ts">
+    // ...existing code...
+
+    function handleStatusChange(value: string | undefined) {
+        console.log("Status change triggered with value:", value);
+        console.log("Available enum values:", Object.values(ToolDtoStatusEnum));
+        
+        if (value && value !== "undefined") {
+            // Try direct assignment first
+            status = value as ToolDtoStatusEnum;
+            console.log("Set status to:", status);
+        } else {
+            status = undefined;
+            console.log("Set status to undefined");
+        }
+        desiredPage = 0; // Reset to first page when changing status
+    }
+
+    const statusOptions = [
+        { value: "undefined", label: "All Statuses" },
+        ...Object.values(ToolDtoStatusEnum).map((enumValue) => ({
+            value: enumValue, // Use the enum value directly, not toString()
+            label: enumValue.charAt(0).toUpperCase() + enumValue.slice(1).toLowerCase()
+        }))
+    ];
+
+    // Debug the derived value
+    const statusTriggerContent = $derived(() => {
+        const currentValue = status ?? "undefined";
+        console.log("Current status value for trigger:", currentValue);
+        const found = statusOptions.find((option) => option.value === currentValue);
+        console.log("Found option:", found);
+        return found?.label ?? "Select status";
+    });
+
+</script>
+
+<!-- In the template -->
+<Label for="status" class="mb-1">Status</Label>
+<Select.Root type="single" value={status ?? "undefined"} onValueChange={handleStatusChange}>
+    <Select.Trigger class="w-[180px]">
+        {statusTriggerContent}
+    </Select.Trigger>
+    <Select.Content>
+        {#each statusOptions as option (option.value)}
+            <Select.Item
+                value={option.value}
+                label={option.label}
+            >
+                {option.label}
+            </Select.Item>
+        {/each}
+    </Select.Content>
+</Select.Root>
+````
+
+Key changes:
+
+1. **Removed `.toString()`** from enum mapping - use the enum values directly
+2. **Simplified status assignment** - try direct casting instead of bracket notation
+3. **Added console logging** to debug what's happening
+4. **Changed `status?.toString() ?? "undefined"`** to just `status ?? "undefined"`
+5. **Made statusTriggerContent a function** for better debugging
+
+Run this and check the console to see:
+- What enum values are available
+- What value is being passed to the change handler
+- What the current status value is
+
+This will help identify if the issue is with the enum conversion or the Select component itself.
+
+---
+
+_**User**_
+
+fix my tool type selector too
+
+---
+
+_**Assistant**_
+
+I can see the issue with your tool type selector. There are two main problems:
+
+1. **Wrong trigger content**: `toolTypeTriggerContent` is using `statusOptions` instead of `toolTypeOptions`
+2. **Wrong comparison logic**: It's comparing `status` instead of `toolTypeId`
+
+Here's the fix:
+
+````svelte
+<script lang="ts">
+    // ...existing code...
+
+    function handleToolTypeChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            toolTypeId = parseInt(value);
+        } else {
+            toolTypeId = undefined;
+        }
+        desiredPage = 0;
+    }
+
+    // ...existing options...
+
+    const toolTypeTriggerContent = $derived(
+        toolTypeOptions.find((option) => option.value === (toolTypeId?.toString() ?? "undefined"))?.label ?? "Select tool type"
+    );
+
+</script>
+
+<!-- In the template, the label is also wrong -->
+<Label for="tooltype" class="mb-1">Tool type</Label>
+<Select.Root type="single" value={toolTypeId?.toString() ?? "undefined"} onValueChange={handleToolTypeChange}>
+    <Select.Trigger class="w-[180px]">
+        {toolTypeTriggerContent}
+    </Select.Trigger>
+    <Select.Content>
+        {#each toolTypeOptions as option (option.value)}
+            <Select.Item
+                value={option.value}
+                label={option.label}
+            >
+                {option.label}
+            </Select.Item>
+        {/each}
+    </Select.Content>
+</Select.Root>
+````
+
+The key changes:
+
+1. **Fixed `toolTypeTriggerContent`**: Now uses `toolTypeOptions` instead of `statusOptions`
+2. **Fixed comparison**: Now compares `toolTypeId?.toString() ?? "undefined"` instead of `status`
+3. **Fixed label**: Changed from "Status" to "Tool type" (though you had this right in the template)
+4. **Fixed `for` attribute**: Changed to "tooltype" to match the purpose
+
+This should make your tool type selector work properly and show the correct selected value.
 
 ---
 
