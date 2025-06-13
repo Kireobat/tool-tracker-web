@@ -1,106 +1,97 @@
 <script lang="ts" module>
-	import BookOpenIcon from "@lucide/svelte/icons/book-open";
-	import BotIcon from "@lucide/svelte/icons/bot";
-	import ChartPieIcon from "@lucide/svelte/icons/chart-pie";
-	import FrameIcon from "@lucide/svelte/icons/frame";
+	import WrenchIcon from "@lucide/svelte/icons/wrench";
+	import ReceiptText from "@lucide/svelte/icons/receipt-text";
 	import LifeBuoyIcon from "@lucide/svelte/icons/life-buoy";
-	import MapIcon from "@lucide/svelte/icons/map";
 	import SendIcon from "@lucide/svelte/icons/send";
-	import Settings2Icon from "@lucide/svelte/icons/settings-2";
-	import SquareTerminalIcon from "@lucide/svelte/icons/square-terminal";
+	import LandmarkIcon from "@lucide/svelte/icons/landmark";
+	import HammerIcon from "@lucide/svelte/icons/hammer";
 
-	const data = {
+	import { user } from "$lib/functions/user.svelte";
+
+	const data = $derived({
 		user: {
-			name: "shadcn",
-			email: "m@example.com",
+			name: user.current?.name || "Loading...",
+			email: user.current?.email || "Loading...",
 			avatar: "/avatars/shadcn.jpg",
 		},
 		navMain: [
 			{
-				title: "Playground",
+				title: "Tools Management",
 				url: "#",
-				icon: SquareTerminalIcon,
-				isActive: true,
+				icon: HammerIcon,
+				isActive: false,
 				items: [
 					{
-						title: "History",
-						url: "#",
+						title: "Tools Overview",
+						url: "/app/tools",
 					},
 					{
-						title: "Starred",
-						url: "#",
+						title: "Register Tool",
+						url: "/app/tools/register",
 					},
 					{
-						title: "Settings",
-						url: "#",
+						title: "Tool Types",
+						url: "/app/tools/types",
+					}
+				],
+			},
+			{
+				title: "Lending & Agreements",
+				url: "#",
+				icon: ReceiptText,
+				items: [
+					{
+						title: "Active Agreements",
+						url: "/app/agreements",
+					},
+					{
+						title: "Create new agreement",
+						url: "/app/agreements/create",
+					},
+					{
+						title: "Lending History",
+						url: "/app/agreements?historical=true",
+					}
+				],
+			},
+			{
+				title: "Service & Maintenance",
+				url: "#",
+				icon: WrenchIcon,
+				items: [
+					{
+						title: "Service Events",
+						url: "/app/service",
+					},
+					{
+						title: "Schedule Service",
+						url: "/app/service/create",
+					},
+					{
+						title: "Damage Reports",
+						url: "/app/service/damage",
+					},
+					{
+						title: "Report Damage",
+						url: "/app/service/damage/create",
 					},
 				],
 			},
 			{
-				title: "Models",
+				title: "Financial Management",
 				url: "#",
-				icon: BotIcon,
+				icon: LandmarkIcon,
 				items: [
 					{
-						title: "Genesis",
-						url: "#",
+						title: "Fees Overview",
+						url: "/app/fees",
 					},
 					{
-						title: "Explorer",
-						url: "#",
-					},
-					{
-						title: "Quantum",
-						url: "#",
-					},
+						title: "Create Fee",
+						url: "/app/fees/create",
+					}
 				],
-			},
-			{
-				title: "Documentation",
-				url: "#",
-				icon: BookOpenIcon,
-				items: [
-					{
-						title: "Introduction",
-						url: "#",
-					},
-					{
-						title: "Get Started",
-						url: "#",
-					},
-					{
-						title: "Tutorials",
-						url: "#",
-					},
-					{
-						title: "Changelog",
-						url: "#",
-					},
-				],
-			},
-			{
-				title: "Settings",
-				url: "#",
-				icon: Settings2Icon,
-				items: [
-					{
-						title: "General",
-						url: "#",
-					},
-					{
-						title: "Team",
-						url: "#",
-					},
-					{
-						title: "Billing",
-						url: "#",
-					},
-					{
-						title: "Limits",
-						url: "#",
-					},
-				],
-			},
+			}
 		],
 		navSecondary: [
 			{
@@ -113,35 +104,55 @@
 				url: "#",
 				icon: SendIcon,
 			},
-		],
-		projects: [
-			{
-				name: "Design Engineering",
-				url: "#",
-				icon: FrameIcon,
-			},
-			{
-				name: "Sales & Marketing",
-				url: "#",
-				icon: ChartPieIcon,
-			},
-			{
-				name: "Travel",
-				url: "#",
-				icon: MapIcon,
-			},
-		],
-	};
+		]
+	});
 </script>
 
 <script lang="ts">
 	import NavMain from "./nav-main.svelte";
-	import NavProjects from "./nav-projects.svelte";
 	import NavSecondary from "./nav-secondary.svelte";
 	import NavUser from "./nav-user.svelte";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import CommandIcon from "@lucide/svelte/icons/command";
-	import type { ComponentProps } from "svelte";
+	import { onMount, type ComponentProps } from "svelte";
+    import { isAdmin } from "$lib/functions/auth/isAdmin";
+	import ShieldIcon from "@lucide/svelte/icons/shield";
+
+	let admin: boolean = $state(false);
+
+    // Create a reactive navMain that includes admin items when user is admin
+    let navMain = $derived(() => {
+        const baseNav = [...data.navMain];
+        
+        if (admin) {
+            baseNav.push({
+                title: "Admin",
+                url: "#",
+                icon: ShieldIcon, // Use a different icon to avoid duplication
+                items: [
+                    {
+                        title: "User Management",
+                        url: "/app/admin/users",
+                    },
+                    {
+                        title: "Role Management", 
+                        url: "/app/admin/roles",
+                    },
+                    {
+                        title: "System Settings",
+                        url: "/app/admin/settings",
+                    }
+                ],
+            });
+        }
+        
+        return baseNav;
+    });
+
+	onMount(async () => {
+        admin = await isAdmin();
+        console.log("Is Admin:", admin);
+    });
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
@@ -169,8 +180,7 @@
 		</Sidebar.Menu>
 	</Sidebar.Header>
 	<Sidebar.Content>
-		<NavMain items={data.navMain} />
-		<NavProjects projects={data.projects} />
+		<NavMain items={navMain()} />
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>

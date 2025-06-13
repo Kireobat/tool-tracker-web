@@ -1,8 +1,5 @@
-import { UserEndpointsApi } from "$lib/generated/tool-tracker/apis/UserEndpointsApi";
+import { userApi } from "$lib/api/apiClient";
 import { ResponseError, type ToolTrackerResponseDto, type LoginDto } from "$lib/generated/tool-tracker";
-
-
-const userApi = new UserEndpointsApi();
 
 export const login = async (loginDto: LoginDto): Promise<ToolTrackerResponseDto> => {
     try {

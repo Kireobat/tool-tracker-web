@@ -1,7 +1,6 @@
-import { AuthEndpointsApi } from "$lib/generated/tool-tracker/apis/AuthEndpointsApi";
+import { authApi } from "$lib/api/apiClient";
 import { ResponseError, type ToolTrackerResponseDto } from "$lib/generated/tool-tracker";
 
-const authApi = new AuthEndpointsApi();
 
 export const isEmployee = async (): Promise<boolean> => {
     try {

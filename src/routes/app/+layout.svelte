@@ -5,19 +5,49 @@
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 
   import { isEmployee } from "$lib/functions/auth/isEmployee";
-    import { onMount } from "svelte";
+  import { onMount } from "svelte";
+
+  import { page } from "$app/state";
+    import { user } from "$lib/functions/user.svelte";
+    import { getProfile } from "$lib/functions/get/getProfile";
 
   let { children } = $props();
 
   let isAuthorized: boolean | undefined = $state();
 
-    onMount(async () => {
-        isAuthorized = await isEmployee();
-        console.log(isAuthorized);
-        if (!isAuthorized) {
-            window.location.href = "/login";
-        }
+  onMount(async () => {
+      isAuthorized = await isEmployee();
+      console.log(isAuthorized);
+      if (!isAuthorized) {
+          window.location.href = "/login";
+      }
+  });
+
+  let breadcrumbs: {
+    label: string;
+    href: string;
+  }[] = $state([]);
+
+  $effect(() => {
+    breadcrumbs = page.url.pathname
+      .split('/')
+      .filter(part => part)
+      .map((part, index, array) => {
+        const href = '/' + array.slice(0, index + 1).join('/');
+        return { label: part.charAt(0).toUpperCase() + part.slice(1), href };
+      });
+  })
+
+
+  const getUser = async () => {
+        user.current = await getProfile();
+    };
+
+    onMount(() => {
+        getUser();
     });
+  
+
 </script>
  
 {#await isAuthorized}
@@ -33,13 +63,16 @@
             <Separator orientation="vertical" class="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb.Root>
               <Breadcrumb.List>
-                <Breadcrumb.Item class="hidden md:block">
-                  <Breadcrumb.Link href="#">Building Your Application</Breadcrumb.Link>
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator class="hidden md:block" />
-                <Breadcrumb.Item>
-                  <Breadcrumb.Page>Data Fetching</Breadcrumb.Page>
-                </Breadcrumb.Item>
+                {#each breadcrumbs as crumb, index}
+                  <Breadcrumb.Item class="hidden md:block">
+                    <Breadcrumb.Link href={crumb.href}>
+                      {crumb.label}
+                    </Breadcrumb.Link>
+                  </Breadcrumb.Item>
+                  {#if index < breadcrumbs.length - 1}
+                    <Breadcrumb.Separator class="hidden md:block" />
+                  {/if}
+                {/each}
               </Breadcrumb.List>
             </Breadcrumb.Root>
           </div>
