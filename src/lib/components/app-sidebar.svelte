@@ -17,7 +17,7 @@
 		navMain: [
 			{
 				title: "Tools Management",
-				url: "#",
+				url: "/app/tools",
 				icon: HammerIcon,
 				isActive: false,
 				items: [
@@ -37,7 +37,7 @@
 			},
 			{
 				title: "Lending & Agreements",
-				url: "#",
+				url: "/app/agreements",
 				icon: ReceiptText,
 				items: [
 					{
@@ -56,7 +56,7 @@
 			},
 			{
 				title: "Service & Maintenance",
-				url: "#",
+				url: "/app/service",
 				icon: WrenchIcon,
 				items: [
 					{
@@ -79,7 +79,7 @@
 			},
 			{
 				title: "Financial Management",
-				url: "#",
+				url: "/app/fees",
 				icon: LandmarkIcon,
 				items: [
 					{
@@ -127,7 +127,7 @@
         if (admin) {
             baseNav.push({
                 title: "Admin",
-                url: "#",
+                url: "/app/admin",
                 icon: ShieldIcon, // Use a different icon to avoid duplication
                 items: [
                     {

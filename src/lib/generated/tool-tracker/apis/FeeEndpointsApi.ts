@@ -31,6 +31,10 @@ import {
     ToolTrackerResponseDtoToJSON,
 } from '../models/index';
 
+export interface GetFeeRequest {
+    id: number;
+}
+
 export interface GetFeesRequest {
     page?: number;
     size?: number;
@@ -42,10 +46,6 @@ export interface GetFeesRequest {
     feeAmountMax?: number;
 }
 
-export interface GetTool1Request {
-    id: number;
-}
-
 export interface RegisterTool1Request {
     createFeeDto: CreateFeeDto;
 }
@@ -54,6 +54,37 @@ export interface RegisterTool1Request {
  * 
  */
 export class FeeEndpointsApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async getFeeRaw(requestParameters: GetFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FeeDto>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getFee().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/fees/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => FeeDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async getFee(requestParameters: GetFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FeeDto> {
+        const response = await this.getFeeRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      */
@@ -108,37 +139,6 @@ export class FeeEndpointsApi extends runtime.BaseAPI {
      */
     async getFees(requestParameters: GetFeesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoFeeDto> {
         const response = await this.getFeesRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async getTool1Raw(requestParameters: GetTool1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FeeDto>> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling getTool1().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/fees/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => FeeDtoFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async getTool1(requestParameters: GetTool1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FeeDto> {
-        const response = await this.getTool1Raw(requestParameters, initOverrides);
         return await response.value();
     }
 

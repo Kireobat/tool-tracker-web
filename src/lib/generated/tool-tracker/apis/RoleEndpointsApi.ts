@@ -16,17 +16,35 @@
 import * as runtime from '../runtime';
 import type {
   PatchUserMapRoleDto,
+  RoleDto,
+  ToolTrackerPageDtoRoleDto,
   ToolTrackerResponseDto,
   UserMapRoleDto,
 } from '../models/index';
 import {
     PatchUserMapRoleDtoFromJSON,
     PatchUserMapRoleDtoToJSON,
+    RoleDtoFromJSON,
+    RoleDtoToJSON,
+    ToolTrackerPageDtoRoleDtoFromJSON,
+    ToolTrackerPageDtoRoleDtoToJSON,
     ToolTrackerResponseDtoFromJSON,
     ToolTrackerResponseDtoToJSON,
     UserMapRoleDtoFromJSON,
     UserMapRoleDtoToJSON,
 } from '../models/index';
+
+export interface GetRoleRequest {
+    id: number;
+}
+
+export interface GetRolesRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    name?: string;
+    email?: string;
+}
 
 export interface GiveRoleRequest {
     patchUserMapRoleDto: PatchUserMapRoleDto;
@@ -40,6 +58,81 @@ export interface TakeRoleRequest {
  * 
  */
 export class RoleEndpointsApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async getRoleRaw(requestParameters: GetRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoleDto>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getRole().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/roles/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => RoleDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async getRole(requestParameters: GetRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<RoleDto> {
+        const response = await this.getRoleRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getRolesRaw(requestParameters: GetRolesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoRoleDto>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['page'] != null) {
+            queryParameters['page'] = requestParameters['page'];
+        }
+
+        if (requestParameters['size'] != null) {
+            queryParameters['size'] = requestParameters['size'];
+        }
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
+        }
+
+        if (requestParameters['name'] != null) {
+            queryParameters['name'] = requestParameters['name'];
+        }
+
+        if (requestParameters['email'] != null) {
+            queryParameters['email'] = requestParameters['email'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/roles`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ToolTrackerPageDtoRoleDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async getRoles(requestParameters: GetRolesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoRoleDto> {
+        const response = await this.getRolesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      */

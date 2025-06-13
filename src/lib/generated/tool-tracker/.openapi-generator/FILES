@@ -21,14 +21,17 @@ models/PatchLendingAgreementDto.ts
 models/PatchUserMapRoleDto.ts
 models/RegisterToolDto.ts
 models/RegisterUserDto.ts
+models/RoleDto.ts
 models/ToolDto.ts
 models/ToolServiceEventDto.ts
 models/ToolTrackerPageDtoDamageReportDto.ts
 models/ToolTrackerPageDtoFeeDto.ts
 models/ToolTrackerPageDtoLendingAgreementDto.ts
+models/ToolTrackerPageDtoRoleDto.ts
 models/ToolTrackerPageDtoToolDto.ts
 models/ToolTrackerPageDtoToolServiceEventDto.ts
 models/ToolTrackerPageDtoToolTypeDto.ts
+models/ToolTrackerPageDtoUserDto.ts
 models/ToolTrackerResponseDto.ts
 models/ToolTypeDto.ts
 models/UserDto.ts

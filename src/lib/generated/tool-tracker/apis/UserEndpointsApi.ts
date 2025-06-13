@@ -17,16 +17,34 @@ import * as runtime from '../runtime';
 import type {
   LoginDto,
   RegisterUserDto,
+  ToolTrackerPageDtoUserDto,
   ToolTrackerResponseDto,
+  UserDto,
 } from '../models/index';
 import {
     LoginDtoFromJSON,
     LoginDtoToJSON,
     RegisterUserDtoFromJSON,
     RegisterUserDtoToJSON,
+    ToolTrackerPageDtoUserDtoFromJSON,
+    ToolTrackerPageDtoUserDtoToJSON,
     ToolTrackerResponseDtoFromJSON,
     ToolTrackerResponseDtoToJSON,
+    UserDtoFromJSON,
+    UserDtoToJSON,
 } from '../models/index';
+
+export interface GetUserRequest {
+    id: number;
+}
+
+export interface GetUsersRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    name?: string;
+    email?: string;
+}
 
 export interface LoginRequest {
     loginDto: LoginDto;
@@ -40,6 +58,81 @@ export interface RegisterUserRequest {
  * 
  */
 export class UserEndpointsApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async getUserRaw(requestParameters: GetUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDto>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getUser().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/users/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async getUser(requestParameters: GetUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
+        const response = await this.getUserRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getUsersRaw(requestParameters: GetUsersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoUserDto>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['page'] != null) {
+            queryParameters['page'] = requestParameters['page'];
+        }
+
+        if (requestParameters['size'] != null) {
+            queryParameters['size'] = requestParameters['size'];
+        }
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
+        }
+
+        if (requestParameters['name'] != null) {
+            queryParameters['name'] = requestParameters['name'];
+        }
+
+        if (requestParameters['email'] != null) {
+            queryParameters['email'] = requestParameters['email'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/users`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ToolTrackerPageDtoUserDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async getUsers(requestParameters: GetUsersRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoUserDto> {
+        const response = await this.getUsersRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      */

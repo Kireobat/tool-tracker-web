@@ -153,6 +153,23 @@
                     {/each}
                 </Select.Content>
             </Select.Root>
+
+            <Label for="pageSize" class="mb-1">Page size</Label>
+            <Select.Root type="single" value={size.toString()} onValueChange={handlePageSizeChange}>
+                <Select.Trigger class="w-[180px]">
+                    {pageSizeTriggerContent}
+                </Select.Trigger>
+                <Select.Content>
+                    {#each pageSizeOptions as option (option.value)}
+                        <Select.Item
+                            value={option.value}
+                            label={option.label}
+                        >
+                            {option.label}
+                        </Select.Item>
+                    {/each}
+                </Select.Content>
+            </Select.Root>
         </Card.Content>
     </Card.Root>
     <div class="w-full">
@@ -190,25 +207,9 @@
                     </Pagination.Content>
                 {/snippet}
             </Pagination.Root>
-
-            <Select.Root type="single" value={size.toString()} onValueChange={handlePageSizeChange}>
-                <Select.Label class="text-sm font-medium text-gray-700">
-                    Page Size
-                </Select.Label>
-                <Select.Trigger class="w-[180px]">
-                    {pageSizeTriggerContent}
-                </Select.Trigger>
-                <Select.Content>
-                    {#each pageSizeOptions as option (option.value)}
-                        <Select.Item
-                        value={option.value}
-                        label={option.label}
-                        >
-                        {option.label}
-                        </Select.Item>
-                    {/each}
-                </Select.Content>
-            </Select.Root>
+<p class="text-xs text-muted-foreground">
+                Page {toolPageDto.currentPage + 1} of {toolPageDto.totalPages} ({toolPageDto.totalItems} total items)
+            </p>
             </div>
         {/if}
     </div>
