@@ -31,6 +31,10 @@ import {
     ToolTrackerResponseDtoToJSON,
 } from '../models/index';
 
+export interface CreateFeeRequest {
+    createFeeDto: CreateFeeDto;
+}
+
 export interface GetFeeRequest {
     id: number;
 }
@@ -46,14 +50,44 @@ export interface GetFeesRequest {
     feeAmountMax?: number;
 }
 
-export interface RegisterTool1Request {
-    createFeeDto: CreateFeeDto;
-}
-
 /**
  * 
  */
 export class FeeEndpointsApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async createFeeRaw(requestParameters: CreateFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FeeDto>> {
+        if (requestParameters['createFeeDto'] == null) {
+            throw new runtime.RequiredError(
+                'createFeeDto',
+                'Required parameter "createFeeDto" was null or undefined when calling createFee().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/fees/create`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CreateFeeDtoToJSON(requestParameters['createFeeDto']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => FeeDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async createFee(requestParameters: CreateFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FeeDto> {
+        const response = await this.createFeeRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      */
@@ -139,40 +173,6 @@ export class FeeEndpointsApi extends runtime.BaseAPI {
      */
     async getFees(requestParameters: GetFeesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoFeeDto> {
         const response = await this.getFeesRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async registerTool1Raw(requestParameters: RegisterTool1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FeeDto>> {
-        if (requestParameters['createFeeDto'] == null) {
-            throw new runtime.RequiredError(
-                'createFeeDto',
-                'Required parameter "createFeeDto" was null or undefined when calling registerTool1().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/v1/fees/create`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: CreateFeeDtoToJSON(requestParameters['createFeeDto']),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => FeeDtoFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async registerTool1(requestParameters: RegisterTool1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FeeDto> {
-        const response = await this.registerTool1Raw(requestParameters, initOverrides);
         return await response.value();
     }
 
