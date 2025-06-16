@@ -2,7 +2,6 @@
     import Button from "$lib/components/ui/button/button.svelte";
     import * as Card from "$lib/components/ui/card/index.js";
     import { Input } from "$lib/components/ui/input";
-    import { Textarea } from "$lib/components/ui/textarea";
     import Label from "$lib/components/ui/label/label.svelte";
     import { Badge } from "$lib/components/ui/badge";
     import { Separator } from "$lib/components/ui/separator";
