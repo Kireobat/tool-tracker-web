@@ -34,7 +34,7 @@ export const columns: ColumnDef<ToolServiceEventDto>[] = [
   accessorKey: "serviceStartTime",
   header: "Service start time",
   cell: ({ row }) => {
-    const date = new Date(row.getValue("createdTime"));
+    const date = new Date(row.getValue("serviceStartTime"));
     return date.toLocaleDateString("nb-NO", {
       year: "numeric",
       month: "2-digit",
@@ -47,7 +47,7 @@ export const columns: ColumnDef<ToolServiceEventDto>[] = [
   accessorKey: "serviceStopTime",
   header: "Service stop time",
   cell: ({ row }) => {
-    const date = new Date(row.getValue("createdTime"));
+    const date = new Date(row.getValue("serviceStopTime"));
     return date.toLocaleDateString("nb-NO", {
       year: "numeric",
       month: "2-digit",
