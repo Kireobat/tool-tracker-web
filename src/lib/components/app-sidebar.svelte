@@ -32,6 +32,10 @@
 					{
 						title: "Tool Types",
 						url: "/app/tools/types",
+					},
+					{
+						title: "Create Type",
+						url: "/app/tools/types/create",
 					}
 				],
 			},

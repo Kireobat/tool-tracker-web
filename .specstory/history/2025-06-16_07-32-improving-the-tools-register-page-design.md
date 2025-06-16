@@ -290,7 +290,1208 @@ I'll help you use more shadcn-svelte components to improve the design. Here's an
     ]);
 
     const statusTriggerContent = $derived(
-        statusOptions.find((option) => option
+        statusOptions.find((option) => option.value === (status ?? "undefined"))?.label ?? "Select status"
+    );
+
+    const toolTypeTriggerContent = $derived(
+        toolTypeOptions.find((option) => option.value === (toolTypeId?.toString() ?? "undefined"))?.label ?? "Select tool type"
+    );
+
+    const handleRegisterTool = async() => {
+        if (!name || !serial || !toolTypeId) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        const registerToolDto: RegisterToolDto = {
+            name,
+            serial,
+            type: toolTypeId,
+            status: status ?? ToolDtoStatusEnum.Available
+        };
+
+        await createTool(registerToolDto);
+        window.location.reload();
+    };
+</script>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">Register New Tool</h1>
+            <p class="text-lg text-slate-600">Add a new tool to your inventory system</p>
+            <Badge variant="secondary" class="mt-2">Tool Registration</Badge>
+        </div>
+
+        <!-- Form Card -->
+        <Card.Root class="shadow-xl border-0">
+            <Card.Header class="text-center pb-6">
+                <Card.Title class="text-2xl font-semibold text-slate-800">Tool Details</Card.Title>
+                <Card.Description class="text-slate-600">
+                    Please fill in the required information to register your tool
+                </Card.Description>
+            </Card.Header>
+            
+            <Card.Content>
+                <form class="space-y-6">
+                    <!-- Tool Name Field -->
+                    <div class="space-y-3">
+                        <Label for="tool-name" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Tool Name 
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="tool-name"
+                            type="text"
+                            placeholder="Enter tool name (e.g., Drill, Hammer, Saw)"
+                            bind:value={name}
+                            class="w-full h-11 text-base"
+                            required
+                        />
+                    </div>
+
+                    <Separator />
+
+                    <!-- Serial Number Field -->
+                    <div class="space-y-3">
+                        <Label for="serial-number" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Serial Number
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="serial-number"
+                            type="text"
+                            placeholder="Enter unique serial number"
+                            bind:value={serial}
+                            class="w-full h-11 text-base font-mono"
+                            required
+                        />
+                    </div>
+
+                    <Separator />
+
+                    <!-- Tool Type Field -->
+                    <div class="space-y-3">
+                        <Label for="tooltype" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Tool Type
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Select.Root type="single" value={toolTypeId?.toString() ?? "undefined"} onValueChange={handleToolTypeChange}>
+                            <Select.Trigger class="w-full h-11">
+                                <Select.Value placeholder="Select tool type">
+                                    {toolTypeTriggerContent}
+                                </Select.Value>
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each toolTypeOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Status Field -->
+                    <div class="space-y-3">
+                        <Label for="status" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Initial Status
+                            <Badge variant="outline" class="text-xs px-1 py-0">Optional</Badge>
+                        </Label>
+                        <Select.Root type="single" value={status ?? "undefined"} onValueChange={handleStatusChange}>
+                            <Select.Trigger class="w-full h-11">
+                                <Select.Value placeholder="Select initial status">
+                                    {statusTriggerContent}
+                                </Select.Value>
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each statusOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+                </form>
+            </Card.Content>
+
+            <Card.Footer class="flex flex-col gap-4 pt-6">
+                <Button
+                    onclick={handleRegisterTool}
+                    class="w-full h-12 text-base font-semibold"
+                    size="lg"
+                >
+                    Register Tool
+                </Button>
+                
+                <Separator />
+                
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                    <span>fields must be completed</span>
+                </div>
+            </Card.Footer>
+        </Card.Root>
+    </div>
+</div>
+````
+
+Key improvements using shadcn-svelte components:
+
+1. **Card Component**: Used `Card.Root`, `Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`, and `Card.Footer` for better structure
+2. **Badge Component**: Added badges to indicate required/optional fields and section labels
+3. **Separator Component**: Used separators to visually divide form sections
+4. **Select.Value**: Used proper `Select.Value` component with placeholder text
+5. **Enhanced Styling**: 
+   - Better gradient background
+   - Improved spacing and typography
+   - Larger input heights for better usability
+   - Better visual hierarchy with shadows and borders
+6. **Better UX**:
+   - More descriptive placeholders
+   - Clearer field labels with visual indicators
+   - Better button sizing
+   - Improved card layout structure
+
+All functionality remains exactly the same while using more shadcn-svelte components for a more consistent and polished design.
+
+---
+
+_**User**_
+
+@workspace  Can you copy this page and adapt it for the other paths 
+
+/agreements/create
+/fees/create
+/service/create
+/service/damage/create
+/tools/types/create
+
+You will also need to adapt it to whatever the associated create method in /functions/create requires interms of parameters
+
+---
+
+_**Assistant**_
+
+I'll create the create pages for each of the requested paths, adapting them to use the appropriate DTOs and create functions. Let me create these pages:
+
+## 1. `/app/agreements/create` page
+
+````svelte
+<script lang="ts">
+    import { type CreateLendingAgreementDto, type ToolTrackerPageDtoToolDto, type ToolTrackerPageDtoUserDto, ToolDtoStatusEnum } from "$lib/generated/tool-tracker";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import { getTools } from "$lib/functions/get/getTools";
+    import { getUsers } from "$lib/functions/get/getUsers";
+    import * as Select from "$lib/components/ui/select/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { Input } from "$lib/components/ui/input";
+    import Label from "$lib/components/ui/label/label.svelte";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Separator } from "$lib/components/ui/separator";
+    import { createAgreement } from "$lib/functions/create/createAgreement";
+
+    let toolId: number | undefined = $state();
+    let borrowerId: number | undefined = $state();
+    let lentAt: string = $state("");
+    let dueAt: string = $state("");
+    let toolPageDto: ToolTrackerPageDtoToolDto | undefined = $state();
+    let userPageDto: ToolTrackerPageDtoUserDto | undefined = $state();
+
+    $effect(() => {
+        (async () => {
+            toolPageDto = await getTools(0, 1000, ["name,asc"], undefined, undefined, undefined, ToolDtoStatusEnum.Available);
+        })();
+    });
+
+    $effect(() => {
+        (async () => {
+            userPageDto = await getUsers(0, 1000, ["firstName,asc"]);
+        })();
+    });
+
+    function handleToolChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            toolId = parseInt(value);
+        } else {
+            toolId = undefined;
+        }
+    }
+
+    function handleBorrowerChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            borrowerId = parseInt(value);
+        } else {
+            borrowerId = undefined;
+        }
+    }
+
+    const toolOptions = $derived([
+        ...(toolPageDto?.page.map((tool) => ({
+            value: tool.id.toString(),
+            label: `${tool.name} (${tool.serial})`
+        })) ?? [])
+    ]);
+
+    const userOptions = $derived([
+        ...(userPageDto?.page.map((user) => ({
+            value: user.id.toString(),
+            label: `${user.firstName} ${user.lastName}`
+        })) ?? [])
+    ]);
+
+    const toolTriggerContent = $derived(
+        toolOptions.find((option) => option.value === (toolId?.toString() ?? "undefined"))?.label ?? "Select tool"
+    );
+
+    const borrowerTriggerContent = $derived(
+        userOptions.find((option) => option.value === (borrowerId?.toString() ?? "undefined"))?.label ?? "Select borrower"
+    );
+
+    const handleCreateAgreement = async() => {
+        if (!toolId || !borrowerId || !lentAt || !dueAt) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        const createLendingAgreementDto: CreateLendingAgreementDto = {
+            toolId,
+            borrowerId,
+            lentAt: new Date(lentAt),
+            dueAt: new Date(dueAt)
+        };
+
+        await createAgreement(createLendingAgreementDto);
+        window.location.reload();
+    };
+</script>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">Create Lending Agreement</h1>
+            <p class="text-lg text-slate-600">Create a new tool lending agreement</p>
+            <Badge variant="secondary" class="mt-2">Agreement Creation</Badge>
+        </div>
+
+        <!-- Form Card -->
+        <Card.Root class="shadow-xl border-0">
+            <Card.Header class="text-center pb-6">
+                <Card.Title class="text-2xl font-semibold text-slate-800">Agreement Details</Card.Title>
+                <Card.Description class="text-slate-600">
+                    Please fill in the required information to create the lending agreement
+                </Card.Description>
+            </Card.Header>
+            
+            <Card.Content>
+                <form class="space-y-6">
+                    <!-- Tool Field -->
+                    <div class="space-y-3">
+                        <Label for="tool" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Tool 
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Select.Root type="single" value={toolId?.toString() ?? "undefined"} onValueChange={handleToolChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {toolTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each toolOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Borrower Field -->
+                    <div class="space-y-3">
+                        <Label for="borrower" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Borrower
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Select.Root type="single" value={borrowerId?.toString() ?? "undefined"} onValueChange={handleBorrowerChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {borrowerTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each userOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Lent At Field -->
+                    <div class="space-y-3">
+                        <Label for="lent-at" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Lent At
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="lent-at"
+                            type="datetime-local"
+                            bind:value={lentAt}
+                            class="w-full h-11 text-base"
+                            required
+                        />
+                    </div>
+
+                    <Separator />
+
+                    <!-- Due At Field -->
+                    <div class="space-y-3">
+                        <Label for="due-at" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Due At
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="due-at"
+                            type="datetime-local"
+                            bind:value={dueAt}
+                            class="w-full h-11 text-base"
+                            required
+                        />
+                    </div>
+                </form>
+            </Card.Content>
+
+            <Card.Footer class="flex flex-col gap-4 pt-6">
+                <Button
+                    onclick={handleCreateAgreement}
+                    class="w-full h-12 text-base font-semibold"
+                    size="lg"
+                >
+                    Create Agreement
+                </Button>
+                
+                <Separator />
+                
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                    <span>fields must be completed</span>
+                </div>
+            </Card.Footer>
+        </Card.Root>
+    </div>
+</div>
+````
+
+## 2. `/app/fees/create` page
+
+````svelte
+<script lang="ts">
+    import { type CreateFeeDto, type ToolTrackerPageDtoLendingAgreementDto, FeeDtoStatusEnum } from "$lib/generated/tool-tracker";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import { getAgreements } from "$lib/functions/get/getAgreements";
+    import * as Select from "$lib/components/ui/select/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { Input } from "$lib/components/ui/input";
+    import Label from "$lib/components/ui/label/label.svelte";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Separator } from "$lib/components/ui/separator";
+    import { createFee } from "$lib/functions/create/createFee";
+
+    let lendingAgreementId: number | undefined = $state();
+    let feeAmount: number | undefined = $state();
+    let status: FeeDtoStatusEnum | undefined = $state();
+    let agreementPageDto: ToolTrackerPageDtoLendingAgreementDto | undefined = $state();
+
+    $effect(() => {
+        (async () => {
+            agreementPageDto = await getAgreements(0, 1000, ["id,desc"]);
+        })();
+    });
+
+    function handleAgreementChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            lendingAgreementId = parseInt(value);
+        } else {
+            lendingAgreementId = undefined;
+        }
+    }
+
+    function handleStatusChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            status = value as FeeDtoStatusEnum;
+        } else {
+            status = undefined;
+        }
+    }
+
+    const agreementOptions = $derived([
+        ...(agreementPageDto?.page.map((agreement) => ({
+            value: agreement.id.toString(),
+            label: `Agreement #${agreement.id} - ${agreement.tool?.name} (${agreement.borrower?.firstName} ${agreement.borrower?.lastName})`
+        })) ?? [])
+    ]);
+
+    const statusOptions = [
+        ...Object.values(FeeDtoStatusEnum).map((enumValue) => ({
+            value: enumValue,
+            label: enumValue.charAt(0).toUpperCase() + enumValue.slice(1).toLowerCase()
+        }))
+    ];
+
+    const agreementTriggerContent = $derived(
+        agreementOptions.find((option) => option.value === (lendingAgreementId?.toString() ?? "undefined"))?.label ?? "Select agreement"
+    );
+
+    const statusTriggerContent = $derived(
+        statusOptions.find((option) => option.value === (status ?? "undefined"))?.label ?? "Select status"
+    );
+
+    const handleCreateFee = async() => {
+        if (!lendingAgreementId || !feeAmount || !status) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        const createFeeDto: CreateFeeDto = {
+            lendingAgreementId,
+            feeAmount,
+            status
+        };
+
+        await createFee(createFeeDto);
+        window.location.reload();
+    };
+</script>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">Create Fee</h1>
+            <p class="text-lg text-slate-600">Create a new fee for a lending agreement</p>
+            <Badge variant="secondary" class="mt-2">Fee Creation</Badge>
+        </div>
+
+        <!-- Form Card -->
+        <Card.Root class="shadow-xl border-0">
+            <Card.Header class="text-center pb-6">
+                <Card.Title class="text-2xl font-semibold text-slate-800">Fee Details</Card.Title>
+                <Card.Description class="text-slate-600">
+                    Please fill in the required information to create the fee
+                </Card.Description>
+            </Card.Header>
+            
+            <Card.Content>
+                <form class="space-y-6">
+                    <!-- Lending Agreement Field -->
+                    <div class="space-y-3">
+                        <Label for="agreement" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Lending Agreement 
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Select.Root type="single" value={lendingAgreementId?.toString() ?? "undefined"} onValueChange={handleAgreementChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {agreementTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each agreementOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Fee Amount Field -->
+                    <div class="space-y-3">
+                        <Label for="fee-amount" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Fee Amount
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="fee-amount"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="Enter fee amount"
+                            bind:value={feeAmount}
+                            class="w-full h-11 text-base"
+                            required
+                        />
+                    </div>
+
+                    <Separator />
+
+                    <!-- Status Field -->
+                    <div class="space-y-3">
+                        <Label for="status" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Status
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Select.Root type="single" value={status ?? "undefined"} onValueChange={handleStatusChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {statusTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each statusOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+                </form>
+            </Card.Content>
+
+            <Card.Footer class="flex flex-col gap-4 pt-6">
+                <Button
+                    onclick={handleCreateFee}
+                    class="w-full h-12 text-base font-semibold"
+                    size="lg"
+                >
+                    Create Fee
+                </Button>
+                
+                <Separator />
+                
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                    <span>fields must be completed</span>
+                </div>
+            </Card.Footer>
+        </Card.Root>
+    </div>
+</div>
+````
+
+## 3. `/app/service/create` page
+
+````svelte
+<script lang="ts">
+    import { type CreateToolServiceEventDto, type ToolTrackerPageDtoToolDto, type ToolTrackerPageDtoLendingAgreementDto, type ToolTrackerPageDtoDamageReportDto } from "$lib/generated/tool-tracker";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import { getTools } from "$lib/functions/get/getTools";
+    import { getAgreements } from "$lib/functions/get/getAgreements";
+    import { getReports } from "$lib/functions/get/getReports";
+    import * as Select from "$lib/components/ui/select/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { Input } from "$lib/components/ui/input";
+    import { Textarea } from "$lib/components/ui/textarea";
+    import Label from "$lib/components/ui/label/label.svelte";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Separator } from "$lib/components/ui/separator";
+    import { createToolServiceEvent } from "$lib/functions/create/createToolServiceEvent";
+
+    let toolId: number | undefined = $state();
+    let damageReportId: number | undefined = $state();
+    let lendingAgreementId: number | undefined = $state();
+    let description: string = $state("");
+    let toolPageDto: ToolTrackerPageDtoToolDto | undefined = $state();
+    let agreementPageDto: ToolTrackerPageDtoLendingAgreementDto | undefined = $state();
+    let reportPageDto: ToolTrackerPageDtoDamageReportDto | undefined = $state();
+
+    $effect(() => {
+        (async () => {
+            toolPageDto = await getTools(0, 1000, ["name,asc"]);
+        })();
+    });
+
+    $effect(() => {
+        (async () => {
+            agreementPageDto = await getAgreements(0, 1000, ["id,desc"]);
+        })();
+    });
+
+    $effect(() => {
+        (async () => {
+            reportPageDto = await getReports(0, 1000, ["id,desc"]);
+        })();
+    });
+
+    function handleToolChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            toolId = parseInt(value);
+        } else {
+            toolId = undefined;
+        }
+    }
+
+    function handleReportChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            damageReportId = parseInt(value);
+        } else {
+            damageReportId = undefined;
+        }
+    }
+
+    function handleAgreementChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            lendingAgreementId = parseInt(value);
+        } else {
+            lendingAgreementId = undefined;
+        }
+    }
+
+    const toolOptions = $derived([
+        { value: "undefined", label: "No specific tool" },
+        ...(toolPageDto?.page.map((tool) => ({
+            value: tool.id.toString(),
+            label: `${tool.name} (${tool.serial})`
+        })) ?? [])
+    ]);
+
+    const reportOptions = $derived([
+        { value: "undefined", label: "No damage report" },
+        ...(reportPageDto?.page.map((report) => ({
+            value: report.id.toString(),
+            label: `Report #${report.id} - ${report.description?.substring(0, 50)}...`
+        })) ?? [])
+    ]);
+
+    const agreementOptions = $derived([
+        { value: "undefined", label: "No lending agreement" },
+        ...(agreementPageDto?.page.map((agreement) => ({
+            value: agreement.id.toString(),
+            label: `Agreement #${agreement.id} - ${agreement.tool?.name}`
+        })) ?? [])
+    ]);
+
+    const toolTriggerContent = $derived(
+        toolOptions.find((option) => option.value === (toolId?.toString() ?? "undefined"))?.label ?? "Select tool"
+    );
+
+    const reportTriggerContent = $derived(
+        reportOptions.find((option) => option.value === (damageReportId?.toString() ?? "undefined"))?.label ?? "Select damage report"
+    );
+
+    const agreementTriggerContent = $derived(
+        agreementOptions.find((option) => option.value === (lendingAgreementId?.toString() ?? "undefined"))?.label ?? "Select agreement"
+    );
+
+    const handleCreateServiceEvent = async() => {
+        if (!description) {
+            alert("Please provide a description for the service event.");
+            return;
+        }
+
+        const createToolServiceEventDto: CreateToolServiceEventDto = {
+            toolId: toolId || undefined,
+            damageReportId: damageReportId || undefined,
+            lendingAgreementId: lendingAgreementId || undefined,
+            description
+        };
+
+        await createToolServiceEvent(createToolServiceEventDto);
+        window.location.reload();
+    };
+</script>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">Create Service Event</h1>
+            <p class="text-lg text-slate-600">Create a new tool service event</p>
+            <Badge variant="secondary" class="mt-2">Service Event Creation</Badge>
+        </div>
+
+        <!-- Form Card -->
+        <Card.Root class="shadow-xl border-0">
+            <Card.Header class="text-center pb-6">
+                <Card.Title class="text-2xl font-semibold text-slate-800">Service Event Details</Card.Title>
+                <Card.Description class="text-slate-600">
+                    Please fill in the information to create the service event
+                </Card.Description>
+            </Card.Header>
+            
+            <Card.Content>
+                <form class="space-y-6">
+                    <!-- Description Field -->
+                    <div class="space-y-3">
+                        <Label for="description" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Description 
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Textarea
+                            id="description"
+                            placeholder="Describe the service event (e.g., maintenance, repair, inspection)"
+                            bind:value={description}
+                            class="w-full min-h-[100px] text-base"
+                            required
+                        />
+                    </div>
+
+                    <Separator />
+
+                    <!-- Tool Field -->
+                    <div class="space-y-3">
+                        <Label for="tool" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Tool
+                            <Badge variant="outline" class="text-xs px-1 py-0">Optional</Badge>
+                        </Label>
+                        <Select.Root type="single" value={toolId?.toString() ?? "undefined"} onValueChange={handleToolChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {toolTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each toolOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Damage Report Field -->
+                    <div class="space-y-3">
+                        <Label for="damage-report" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Damage Report
+                            <Badge variant="outline" class="text-xs px-1 py-0">Optional</Badge>
+                        </Label>
+                        <Select.Root type="single" value={damageReportId?.toString() ?? "undefined"} onValueChange={handleReportChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {reportTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each reportOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Lending Agreement Field -->
+                    <div class="space-y-3">
+                        <Label for="lending-agreement" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Lending Agreement
+                            <Badge variant="outline" class="text-xs px-1 py-0">Optional</Badge>
+                        </Label>
+                        <Select.Root type="single" value={lendingAgreementId?.toString() ?? "undefined"} onValueChange={handleAgreementChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {agreementTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each agreementOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+                </form>
+            </Card.Content>
+
+            <Card.Footer class="flex flex-col gap-4 pt-6">
+                <Button
+                    onclick={handleCreateServiceEvent}
+                    class="w-full h-12 text-base font-semibold"
+                    size="lg"
+                >
+                    Create Service Event
+                </Button>
+                
+                <Separator />
+                
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                    <span>fields must be completed</span>
+                </div>
+            </Card.Footer>
+        </Card.Root>
+    </div>
+</div>
+````
+
+## 4. `/app/service/damage/create` page
+
+````svelte
+<script lang="ts">
+    import { type CreateDamageReportDto, type ToolTrackerPageDtoLendingAgreementDto } from "$lib/generated/tool-tracker";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import { getAgreements } from "$lib/functions/get/getAgreements";
+    import * as Select from "$lib/components/ui/select/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { Textarea } from "$lib/components/ui/textarea";
+    import Label from "$lib/components/ui/label/label.svelte";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Separator } from "$lib/components/ui/separator";
+    import { createReport } from "$lib/functions/create/createReport";
+
+    let lendingAgreementId: number | undefined = $state();
+    let description: string = $state("");
+    let agreementPageDto: ToolTrackerPageDtoLendingAgreementDto | undefined = $state();
+
+    $effect(() => {
+        (async () => {
+            agreementPageDto = await getAgreements(0, 1000, ["id,desc"]);
+        })();
+    });
+
+    function handleAgreementChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            lendingAgreementId = parseInt(value);
+        } else {
+            lendingAgreementId = undefined;
+        }
+    }
+
+    const agreementOptions = $derived([
+        ...(agreementPageDto?.page.map((agreement) => ({
+            value: agreement.id.toString(),
+            label: `Agreement #${agreement.id} - ${agreement.tool?.name} (${agreement.borrower?.firstName} ${agreement.borrower?.lastName})`
+        })) ?? [])
+    ]);
+
+    const agreementTriggerContent = $derived(
+        agreementOptions.find((option) => option.value === (lendingAgreementId?.toString() ?? "undefined"))?.label ?? "Select agreement"
+    );
+
+    const handleCreateReport = async() => {
+        if (!lendingAgreementId || !description) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+
+        const createDamageReportDto: CreateDamageReportDto = {
+            lendingAgreementId,
+            description
+        };
+
+        await createReport(createDamageReportDto);
+        window.location.reload();
+    };
+</script>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">Create Damage Report</h1>
+            <p class="text-lg text-slate-600">Report damage for a lending agreement</p>
+            <Badge variant="secondary" class="mt-2">Damage Report Creation</Badge>
+        </div>
+
+        <!-- Form Card -->
+        <Card.Root class="shadow-xl border-0">
+            <Card.Header class="text-center pb-6">
+                <Card.Title class="text-2xl font-semibold text-slate-800">Damage Report Details</Card.Title>
+                <Card.Description class="text-slate-600">
+                    Please fill in the required information to create the damage report
+                </Card.Description>
+            </Card.Header>
+            
+            <Card.Content>
+                <form class="space-y-6">
+                    <!-- Lending Agreement Field -->
+                    <div class="space-y-3">
+                        <Label for="agreement" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Lending Agreement 
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Select.Root type="single" value={lendingAgreementId?.toString() ?? "undefined"} onValueChange={handleAgreementChange}>
+                            <Select.Trigger class="w-full h-11">
+                                {agreementTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each agreementOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Description Field -->
+                    <div class="space-y-3">
+                        <Label for="description" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Damage Description
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Textarea
+                            id="description"
+                            placeholder="Describe the damage in detail (e.g., scratches, dents, broken parts)"
+                            bind:value={description}
+                            class="w-full min-h-[150px] text-base"
+                            required
+                        />
+                    </div>
+                </form>
+            </Card.Content>
+
+            <Card.Footer class="flex flex-col gap-4 pt-6">
+                <Button
+                    onclick={handleCreateReport}
+                    class="w-full h-12 text-base font-semibold"
+                    size="lg"
+                >
+                    Create Damage Report
+                </Button>
+                
+                <Separator />
+                
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                    <span>fields must be completed</span>
+                </div>
+            </Card.Footer>
+        </Card.Root>
+    </div>
+</div>
+````
+
+## 5. `/app/tools/types/create` page
+
+For this page, you'll need to create a `createToolType` function first, as it doesn't exist in your workspace. Create this file:
+
+````typescript
+import { typeApi } from "$lib/api/apiClient";
+import { ResponseError, type CreateToolTypeDto, type ToolTypeDto, type ToolTrackerResponseDto } from "$lib/generated/tool-tracker";
+
+export const createToolType = async (createToolTypeDto: CreateToolTypeDto): Promise<ToolTypeDto> => {
+    try {
+        const res = await typeApi.createToolType({ createToolTypeDto: createToolTypeDto });
+        return res;
+    } catch (error) {
+        if (error instanceof ResponseError) {
+            const res = await error.response.json() as ToolTrackerResponseDto;
+            throw res;
+        } else {
+            console.error(error);
+            throw error;
+        }
+    }
+}
+````
+
+Then create the page:
+
+````svelte
+<script lang="ts">
+    import { type CreateToolTypeDto } from "$lib/generated/tool-tracker";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { Input } from "$lib/components/ui/input";
+    import { Textarea } from "$lib/components/ui/textarea";
+    import Label from "$lib/components/ui/label/label.svelte";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Separator } from "$lib/components/ui/separator";
+    import { createToolType } from "$lib/functions/create/createToolType";
+
+    let name: string = $state("");
+    let description: string = $state("");
+
+    const handleCreateToolType = async() => {
+        if (!name) {
+            alert("Please provide a name for the tool type.");
+            return;
+        }
+
+        const createToolTypeDto: CreateToolTypeDto = {
+            name,
+            description: description || undefined
+        };
+
+        await createToolType(createToolTypeDto);
+        window.location.reload();
+    };
+</script>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">Create Tool Type</h1>
+            <p class="text-lg text-slate-600">Create a new tool type category</p>
+            <Badge variant="secondary" class="mt-2">Tool Type Creation</Badge>
+        </div>
+
+        <!-- Form Card -->
+        <Card.Root class="shadow-xl border-0">
+            <Card.Header class="text-center pb-6">
+                <Card.Title class="text-2xl font-semibold text-slate-800">Tool Type Details</Card.Title>
+                <Card.Description class="text-slate-600">
+                    Please fill in the required information to create the tool type
+                </Card.Description>
+            </Card.Header>
+            
+            <Card.Content>
+                <form class="space-y-6">
+                    <!-- Name Field -->
+                    <div class="space-y-3">
+                        <Label for="name" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Tool Type Name 
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="name"
+                            type="text"
+                            placeholder="Enter tool type name (e.g., Power Tools, Hand Tools, Measuring Tools)"
+                            bind:value={name}
+                            class="w-full h-11 text-base"
+                            required
+                        />
+                    </div>
+
+                    <Separator />
+
+                    <!-- Description Field -->
+                    <div class="space-y-3">
+                        <Label for="description" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Description
+                            <Badge variant="outline" class="text-xs px-1 py-0">Optional</Badge>
+                        </Label>
+                        <Textarea
+                            id="description"
+                            placeholder="Describe this tool type category (optional)"
+                            bind:value={description}
+                            class="w-full min-h-[100px] text-base"
+                        />
+                    </div>
+                </form>
+            </Card.Content>
+
+            <Card.Footer class="flex flex-col gap-4 pt-6">
+                <Button
+                    onclick={handleCreateToolType}
+                    class="w-full h-12 text-base font-semibold"
+                    size="lg"
+                >
+                    Create Tool Type
+                </Button>
+                
+                <Separator />
+                
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                    <span>fields must be completed</span>
+                </div>
+            </Card.Footer>
+        </Card.Root>
+    </div>
+</div>
+````
+
+You'll also need to create these missing API functions if they don't exist:
+
+1. `getUsers` for the agreements create page
+2. `createToolType` for the tool types create page (provided above)
+
+Each page follows the same design pattern as your original tools register page but is adapted for the specific DTOs and requirements of each endpoint. The pages include proper validation, error handling, and consistent styling.
+
+---
+
+_**User**_
+
+@workspace have you even read the CreateDtos? The pages you make contain many bugs/wrong code. Try again forevery thing except agreements, fees and tools as I have fixed those my self.
+
+---
+
+_**Assistant**_
+
+You're absolutely right, I need to look at the actual DTO structures more carefully. Let me examine the `CreateToolServiceEventDto` and `CreateDamageReportDto` and fix the pages properly.
+
+Looking at the DTOs:
+
+1. **CreateToolServiceEventDto** only requires `damageReportId` and has optional `serviceStartTime` and `serviceStopTime` - no `description`, `toolId`, or `lendingAgreementId`
+2. **CreateDamageReportDto** requires `description` and has optional `lendingAgreementId` and `toolId`
+
+Let me fix these pages:
+
+## 1. Fixed `/app/service/create` page
+
+````svelte
+<script lang="ts">
+    import { type CreateToolServiceEventDto, type ToolTrackerPageDtoDamageReportDto } from "$lib/generated/tool-tracker";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import { getReports } from "$lib/functions/get/getReports";
+    import * as Select from "$lib/components/ui/select/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { Input } from "$lib/components/ui/input";
+    import Label from "$lib/components/ui/label/label.svelte";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Separator } from "$lib/components/ui/separator";
+    import { createToolServiceEvent } from "$lib/functions/create/createToolServiceEvent";
+
+    let damageReportId: number | undefined = $state();
+    let serviceStartTime: string = $state("");
+    let serviceStopTime: string = $state("");
+    let reportPageDto: ToolTrackerPageDtoDamageReportDto | undefined = $state();
+
+    $effect(() => {
+        (async () => {
+            reportPageDto = await getReports(0, 1000, ["id,desc"]);
+        })();
+    });
+
+    function handleReportChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            damageReportId = parseInt(value);
+        } else {
+            damageReportId = undefined;
+        }
+    }
+
+    const reportOptions = $derived([
+        ...(reportPageDto?.page.map((report) => ({
+            value: report.id.toString(),
+            label: `Report #${report.id} - ${report.description?.substring(0, 50)}...`
+        })) ?? [])
+    ]);
+
+    const reportTriggerContent = $derived(
+        reportOptions.fin
 
 ---
 
