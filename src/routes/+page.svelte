@@ -1,2 +1,202 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+    import DataTable from "./data-table.svelte";
+    import { columns } from "./columns.js";
+    import { ToolDtoStatusEnum, type ToolDto, type ToolTrackerPageDtoToolDto, type ToolTrackerPageDtoToolTypeDto } from "$lib/generated/tool-tracker";
+    import { getTools } from "$lib/functions/get/getTools";
+    import * as Pagination from "$lib/components/ui/pagination/index.js";
+    import * as Select from "$lib/components/ui/select/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { Input } from "$lib/components/ui/input";
+    import Label from "$lib/components/ui/label/label.svelte";
+    import { getTypes } from "$lib/functions/get/getTypes";
+    import Button from "$lib/components/ui/button/button.svelte";
+    import SunIcon from "@lucide/svelte/icons/sun";
+    import MoonIcon from "@lucide/svelte/icons/moon";
+    import { toggleMode } from "mode-watcher";
+
+    interface Props {
+        data: ToolDto[]
+    }
+
+    
+    let desiredPage: number = $state(0);
+    let size: number = $state(20);
+    let sort: string[] = $state([]);
+    let name: string | undefined = $state()
+    let serial: string | undefined = $state()
+    let toolTypeId: number | undefined = $state()
+
+    let toolPageDto: ToolTrackerPageDtoToolDto | undefined = $state()
+
+    let toolTypePageDto: ToolTrackerPageDtoToolTypeDto | undefined = $state();
+
+    $effect(() => {
+        (async () => {
+            toolPageDto = await getTools(desiredPage, size, sort, name, serial, toolTypeId, ToolDtoStatusEnum.Available);
+        })();
+    });
+    $effect(() => {
+        (async () => {
+            toolTypePageDto = await getTypes(0, 1000, ["name,desc"]);
+        })();
+    });
+
+    function handlePageChange(page: number) {
+        desiredPage = page - 1; // Convert to 0-based indexing for API
+    }
+
+    function handlePageSizeChange(value: string | undefined) {
+        if (value) {
+            size = parseInt(value);
+            desiredPage = 0;
+        }
+    }
+
+    function handleToolTypeChange(value: string | undefined) {
+        if (value && value !== "undefined") {
+            toolTypeId = parseInt(value);
+        } else {
+            toolTypeId = undefined;
+        }
+        desiredPage = 0;
+    }
+
+    const pageSizeOptions = [
+        { value: "5", label: "5" },
+        { value: "10", label: "10" },
+        { value: "20", label: "20" },
+        { value: "50", label: "50" },
+        { value: "100", label: "100" }
+    ];
+
+    const toolTypeOptions = $derived([
+        { value: "undefined", label: "All Types" },
+        ...(toolTypePageDto?.page.map((toolType) => ({
+            value: toolType.id.toString(),
+            label: toolType.name.charAt(0).toUpperCase() + toolType.name.slice(1).toLowerCase()
+        })) ?? [])
+    ]);
+
+    const pageSizeTriggerContent = $derived(
+        pageSizeOptions.find((option) => option.value === size.toString())?.label ?? "Select page size"
+    );
+
+    const toolTypeTriggerContent = $derived(
+        toolTypeOptions.find((option) => option.value === (toolTypeId?.toString() ?? "undefined"))?.label ?? "Select tool type"
+    );
+
+</script>
+
+<div class="space-y-4">
+    <div class="flex justify-between items-center p-4 bg-background border-b">
+        <h1 class="text-2xl font-bold mb-4">Tool Tracker</h1>
+        <p class="text-muted-foreground mb-4">Manage and track tools in your inventory.</p>
+        <div class="flex space-x-2">
+        <Button onclick={toggleMode} variant="outline" size="icon">
+            <SunIcon
+                class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+            />
+            <MoonIcon
+                class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+            />
+            <span class="sr-only">Toggle theme</span>
+            </Button>
+        <Button href="/app" variant="outline">
+            Manage
+        </Button>
+        </div>
+    </div>
+    {#if toolPageDto === undefined}
+        <div>Loading...</div>
+    {:else}
+    <div class="flex space-x-4 mx-4">
+        <Card.Root>
+            <Card.Header>
+                <Card.Title>Search settings</Card.Title>
+            </Card.Header>
+            <Card.Content class="flex flex-col space-y-4">
+                <Label for="name" class="mb-1">Name</Label>
+                <Input type="text" class="max-w-xs" bind:value={name}/>
+
+                <Label for="serial" class="mb-1">Serial</Label>
+                <Input type="text" class="max-w-xs" bind:value={serial}/>
+
+                <Label for="tooltype" class="mb-1">Tool type</Label>
+                <Select.Root type="single" value={toolTypeId?.toString() ?? "undefined"} onValueChange={handleToolTypeChange}>
+                    <Select.Trigger class="w-[180px]">
+                        {toolTypeTriggerContent}
+                    </Select.Trigger>
+                    <Select.Content>
+                        {#each toolTypeOptions as option (option.value)}
+                            <Select.Item
+                                value={option.value}
+                                label={option.label}
+                            >
+                                {option.label}
+                            </Select.Item>
+                        {/each}
+                    </Select.Content>
+                </Select.Root>
+
+                <Label for="pageSize" class="mb-1">Page size</Label>
+                <Select.Root type="single" value={size.toString()} onValueChange={handlePageSizeChange}>
+                    <Select.Trigger class="w-[180px]">
+                        {pageSizeTriggerContent}
+                    </Select.Trigger>
+                    <Select.Content>
+                        {#each pageSizeOptions as option (option.value)}
+                            <Select.Item
+                                value={option.value}
+                                label={option.label}
+                            >
+                                {option.label}
+                            </Select.Item>
+                        {/each}
+                    </Select.Content>
+                </Select.Root>
+            </Card.Content>
+        </Card.Root>
+        <div class="w-full">
+                <DataTable data={toolPageDto.page} {columns} />
+
+                {#if toolPageDto.totalItems > 0}
+                <div class="flex items-center justify-between space-x-4">
+                <Pagination.Root 
+                    count={toolPageDto.totalItems} 
+                    perPage={size} 
+                    page={desiredPage + 1}
+                    onPageChange={handlePageChange}
+                >
+                    {#snippet children({ pages, currentPage })}
+                        <Pagination.Content>
+                            <Pagination.Item>
+                                <Pagination.PrevButton />
+                            </Pagination.Item>
+                            {#each pages as page (page.key)}
+                                {#if page.type === "ellipsis"}
+                                    <Pagination.Item>
+                                        <Pagination.Ellipsis />
+                                    </Pagination.Item>
+                                {:else}
+                                    <Pagination.Item>
+                                        <Pagination.Link {page} isActive={currentPage === page.value}>
+                                            {page.value}
+                                        </Pagination.Link>
+                                    </Pagination.Item>
+                                {/if}
+                            {/each}
+                            <Pagination.Item>
+                                <Pagination.NextButton />
+                            </Pagination.Item>
+                        </Pagination.Content>
+                    {/snippet}
+                </Pagination.Root>
+    <p class="text-xs text-muted-foreground">
+                    Page {toolPageDto.currentPage + 1} of {toolPageDto.totalPages} ({toolPageDto.totalItems} total items)
+                </p>
+                </div>
+            {/if}
+        </div>
+    </div>
+    {/if}
+</div>
