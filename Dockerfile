@@ -13,39 +13,37 @@ FROM node:${NODE_VERSION} as base
 # Set working directory for all build stages.
 WORKDIR /usr/src/app
 
-
-################################################################################
-# Create a stage for installing production dependecies.
-FROM base as deps
-
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.npm to speed up subsequent builds.
-# Leverage bind mounts to package.json and package-lock.json to avoid having to copy them
-# into this layer.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
-
 ################################################################################
 # Create a stage for building the application.
 FROM base as build
 
-# Download additional development dependencies before building, as some projects require
-# "devDependencies" to be installed to build. If you don't need this, remove this step.
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
-    --mount=type=cache,target=/root/.npm \
-    npm ci --include=optional
+# Copy package files first
+COPY package.json package-lock.json ./
+
+# Delete any existing node_modules and package-lock to avoid conflicts
+RUN rm -rf node_modules package-lock.json
+
+# Copy package-lock back
+COPY package-lock.json ./
+
+# Install ALL dependencies (dev + prod + optional) for building
+RUN npm ci --verbose
 
 # Copy the rest of the source files into the image.
 COPY . .
 
-# Force install the correct Rollup binary for the current platform
-RUN npm rebuild rollup --verbose
-
 # Run the build script.
 RUN npm run build
+
+################################################################################
+# Create a stage for installing production dependencies only
+FROM base as deps
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install only production dependencies
+RUN npm ci --omit=dev --verbose
 
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
