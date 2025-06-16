@@ -1,15 +1,29 @@
 import { serviceEventApi } from "$lib/api/apiClient";
 import { ResponseError, type CreateToolServiceEventDto, type ToolServiceEventDto, type ToolTrackerResponseDto } from "$lib/generated/tool-tracker";
+import { addFeedback } from "../feedback.svelte";
 
 
 export const createToolServiceEvent = async (createToolServiceEventDto: CreateToolServiceEventDto): Promise<ToolServiceEventDto> => {
 
     try {
         const res = await serviceEventApi.createServiceEvent({ createToolServiceEventDto: createToolServiceEventDto });
+
+addFeedback({
+                title: "Success",
+                message: "Created service event successfully.",
+                type: "success"
+            });
+
         return res;
     } catch (error) {
         if (error instanceof ResponseError) {
             const res = await error.response.json() as ToolTrackerResponseDto;
+
+            addFeedback({
+                            title: "Error",
+                            message: res.message,
+                            type: "error"
+                        });
             throw res;
         } else {
             console.error(error);
