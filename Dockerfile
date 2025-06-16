@@ -13,6 +13,8 @@ FROM node:${NODE_VERSION}-alpine as base
 # Set working directory for all build stages.
 WORKDIR /usr/src/app
 
+# Install necessary build dependencies for native modules
+RUN apk add --no-cache python3 make g++
 
 ################################################################################
 # Create a stage for installing production dependecies.
@@ -29,14 +31,14 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 
 ################################################################################
 # Create a stage for building the application.
-FROM deps as build
+FROM base as build
 
 # Download additional development dependencies before building, as some projects require
 # "devDependencies" to be installed to build. If you don't need this, remove this step.
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm ci --include=optional
 
 # Copy the rest of the source files into the image.
 COPY . .
@@ -46,10 +48,13 @@ RUN npm run build
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
 # where the necessary files are copied from the build stage.
-FROM base as final
+FROM node:${NODE_VERSION}-alpine as final
 
 # Use production node environment by default.
 ENV NODE_ENV production
+
+# Set working directory
+WORKDIR /usr/src/app
 
 # Run the application as a non-root user.
 USER node
@@ -61,7 +66,6 @@ COPY package.json .
 # the built application from the build stage into the image.
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/build ./build
-
 
 # Expose the port that the application listens on.
 EXPOSE 3000
