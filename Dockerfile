@@ -29,14 +29,14 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 
 ################################################################################
 # Create a stage for building the application.
-FROM deps as build
+FROM base as build
 
 # Download additional development dependencies before building, as some projects require
 # "devDependencies" to be installed to build. If you don't need this, remove this step.
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm ci --include=optional
 
 # Copy the rest of the source files into the image.
 COPY . .
@@ -46,7 +46,7 @@ RUN npm run build
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
 # where the necessary files are copied from the build stage.
-FROM base as final
+FROM node:${NODE_VERSION}-slim as final
 
 # Use production node environment by default.
 ENV NODE_ENV production
