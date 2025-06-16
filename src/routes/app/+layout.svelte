@@ -17,10 +17,6 @@
 
   onMount(async () => {
       isAuthorized = await isEmployee();
-      console.log(isAuthorized);
-      if (!isAuthorized) {
-          window.location.href = "/login";
-      }
   });
 
   let breadcrumbs: {

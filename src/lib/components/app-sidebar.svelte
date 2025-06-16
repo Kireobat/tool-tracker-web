@@ -45,16 +45,12 @@
 				icon: ReceiptText,
 				items: [
 					{
-						title: "Active Agreements",
+						title: "Lending Agreements",
 						url: "/app/agreements",
 					},
 					{
 						title: "Create new agreement",
 						url: "/app/agreements/create",
-					},
-					{
-						title: "Lending History",
-						url: "/app/agreements?historical=true",
 					}
 				],
 			},

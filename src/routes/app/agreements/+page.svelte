@@ -1,7 +1,7 @@
 <script lang="ts">
     import DataTable from "./data-table.svelte";
     import { columns } from "./columns.js";
-    import { type LendingAgreementDto, type ToolTrackerPageDtoLendingAgreementDto } from "$lib/generated/tool-tracker";
+    import { type ToolTrackerPageDtoLendingAgreementDto } from "$lib/generated/tool-tracker";
     import { getAgreements } from "$lib/functions/get/getAgreements";
     import * as Pagination from "$lib/components/ui/pagination/index.js";
     import * as Select from "$lib/components/ui/select/index.js";

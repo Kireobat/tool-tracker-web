@@ -94,11 +94,11 @@
 				</div>
 				<Input id="password-{id}" type="password" required bind:value={password}/>
 			</div>
-			<Button type="submit" class="w-full" onclick={handleLogin}>Login</Button>
+			<Button type="submit" class="w-full" onclick={handleLogin}  href="javascript:void(0);">Login</Button>
 		</div>
 		<div class="text-center text-sm">
 			Don&apos;t have an account?
-			<Button onclick={()=> useLoginForm = false} variant="link" class="underline underline-offset-4"> Sign up </Button>
+			<Button onclick={()=> useLoginForm = false} variant="link" class="underline underline-offset-4"  href="javascript:void(0);"> Sign up </Button>
 		</div>
 	{:else}
 		<div class="flex flex-col items-center gap-2 text-center">
@@ -124,11 +124,11 @@
 				<Label for="confirm-password-{id}">Confirm Password</Label>
 				<Input id="confirm-password-{id}" type="password" required bind:value={confirmPassword}/>
 			</div>
-			<Button type="submit" class="w-full" onclick={handleLogin}>Register</Button>
+			<Button type="submit" class="w-full" onclick={handleLogin}  href="javascript:void(0);">Register</Button>
 		</div>
 		<div class="text-center text-sm">
 			Already have an account?
-			<Button onclick={()=> useLoginForm = true}  variant="link" class="underline underline-offset-4"> Log in </Button>
+			<Button onclick={()=> useLoginForm = true}  variant="link" class="underline underline-offset-4"  href="javascript:void(0);"> Log in </Button>
 		</div>
 	{/if}
 </form>

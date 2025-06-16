@@ -86,7 +86,8 @@
         variant="ghost"
         size="icon"
         class="absolute top-2 right-2"
-        onclick={removeElement}
+        onclick={removeElement} 
+        href="javascript:void(0);"
     >
         <Trash2Icon class="size-4"/>
     </Button>

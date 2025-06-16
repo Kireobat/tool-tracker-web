@@ -92,7 +92,7 @@
         <h1 class="text-2xl font-bold mb-4">Tool Tracker</h1>
         <p class="text-muted-foreground mb-4">Manage and track tools in your inventory.</p>
         <div class="flex space-x-2">
-        <Button onclick={toggleMode} variant="outline" size="icon">
+        <Button onclick={toggleMode} variant="outline" size="icon"  href="javascript:void(0);">
             <SunIcon
                 class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
             />
