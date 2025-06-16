@@ -38,7 +38,7 @@ pipeline {
                             return readJSON(text: response.content).jwt
                         }
 
-                        ddef findContainerByName = { token, name ->
+                        def findContainerByName = { token, name ->
                             def response = httpRequest(
                                 url: "https://docker.kireobat.eu/api/endpoints/2/docker/containers/json?all=true",
                                 httpMode: 'GET',
