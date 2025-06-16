@@ -3,6 +3,10 @@ import type { DamageReportDto } from "$lib/generated/tool-tracker";
 import type { ColumnDef } from "@tanstack/table-core";
 import DataTableActions from "./data-table-actions.svelte";
  
+export type ExtendedDamageReportDto = DamageReportDto & {
+  borrowerName?: string;
+};
+
 export const columns: ColumnDef<DamageReportDto>[] = [
  {
   accessorKey: "id",
@@ -24,12 +28,10 @@ export const columns: ColumnDef<DamageReportDto>[] = [
   header: "Description",
  },
  {
-  accessorKey: "lendingAgreement",
+  accessorKey: "borrowerName", // Use the resolved name instead
   header: "Borrower",
   cell: ({ row }) => {
-    const lendingAgreement = row.getValue("lendingAgreement") as any;
-    const borrower = lendingAgreement?.borrower;
-    return borrower ? `${borrower.firstName} ${borrower.lastName}` : "N/A";
+    return row.getValue("borrowerName") as string ?? "N/A";
   }
  },
  {

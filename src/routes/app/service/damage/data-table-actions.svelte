@@ -3,7 +3,7 @@
  import { Button } from "$lib/components/ui/button/index.js";
  import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
  
- let { id, reportId }: { id: string, reportId: string } = $props();
+ let { id }: { id: string } = $props();
 </script>
  
 <DropdownMenu.Root>
@@ -25,9 +25,6 @@
    <DropdownMenu.Label>Actions</DropdownMenu.Label>
    <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(id)}>
     Copy ID
-   </DropdownMenu.Item>
-   <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(reportId)}>
-    Copy report ID
    </DropdownMenu.Item>
   </DropdownMenu.Group>
   <DropdownMenu.Separator />

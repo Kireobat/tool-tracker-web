@@ -1,13 +1,14 @@
 <script lang="ts">
     import DataTable from "./data-table.svelte";
     import { columns } from "./columns.js";
-    import { type ToolTrackerPageDtoLendingAgreementDto } from "$lib/generated/tool-tracker";
+    import { type LendingAgreementDto, type ToolTrackerPageDtoLendingAgreementDto } from "$lib/generated/tool-tracker";
     import { getAgreements } from "$lib/functions/get/getAgreements";
     import * as Pagination from "$lib/components/ui/pagination/index.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import * as Card from "$lib/components/ui/card/index.js";
     import { Input } from "$lib/components/ui/input";
     import Label from "$lib/components/ui/label/label.svelte";
+    import { getUserById } from "$lib/functions/get/getUserById";
 
     let desiredPage: number = $state(0);
     let size: number = $state(20);
@@ -19,9 +20,19 @@
 
     let agreementPageDto: ToolTrackerPageDtoLendingAgreementDto | undefined = $state()
 
+    let enrichedAgreements: LendingAgreementDto[] = $state([]);
+
     $effect(() => {
         (async () => {
             agreementPageDto = await getAgreements(desiredPage, size, sort, toolId, borrowerId, lentAfter, lentBefore);
+        })();
+    });
+
+    $effect(() => {
+        (async () => {
+        if (agreementPageDto) {
+            enrichedAgreements = await enrichAgreementsWithBorrowerNames(agreementPageDto.page);
+        }
         })();
     });
 
@@ -47,6 +58,27 @@
     const pageSizeTriggerContent = $derived(
         pageSizeOptions.find((option) => option.value === size.toString())?.label ?? "Select page size"
     );
+
+    // Transform the data to include borrower names
+    async function enrichAgreementsWithBorrowerNames(agreements: LendingAgreementDto[]) {
+    return Promise.all(
+        agreements.map(async (agreement) => {
+        let borrowerName = "N/A";
+        if (agreement.borrowerId) {
+            try {
+            const user = await getUserById(agreement.borrowerId);
+            borrowerName = user.name;
+            } catch (error) {
+            console.error("Failed to fetch user:", error);
+            }
+        }
+        return {
+            ...agreement,
+            borrowerName
+        };
+        })
+    );
+    }
 
 </script>
  
@@ -90,7 +122,7 @@
         </Card.Content>
     </Card.Root>
     <div class="w-full">
-            <DataTable data={agreementPageDto.page} {columns} />
+            <DataTable data={enrichedAgreements} {columns} />
 
             {#if agreementPageDto.totalItems > 0}
             <div class="flex items-center justify-between space-x-4">

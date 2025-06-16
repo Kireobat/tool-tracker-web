@@ -2,6 +2,10 @@ import { renderComponent } from "$lib/components/ui/data-table";
 import type { LendingAgreementDto } from "$lib/generated/tool-tracker";
 import type { ColumnDef } from "@tanstack/table-core";
 import DataTableActions from "./data-table-actions.svelte";
+
+export type ExtendedLendingAgreementDto = LendingAgreementDto & {
+  borrowerName?: string;
+};
  
 export const columns: ColumnDef<LendingAgreementDto>[] = [
  {
@@ -17,18 +21,17 @@ export const columns: ColumnDef<LendingAgreementDto>[] = [
   }
  },
  {
-  accessorKey: "borrower",
+  accessorKey: "borrowerName", // Use the resolved name instead
   header: "Borrower",
   cell: ({ row }) => {
-    const borrower = row.getValue("borrower") as any;
-    return borrower ? `${borrower.firstName} ${borrower.lastName}` : "N/A";
+    return row.getValue("borrowerName") as string ?? "N/A";
   }
  },
  {
-  accessorKey: "lentTime",
+  accessorKey: "lendingStartTime",
   header: "Lent Time",
   cell: ({ row }) => {
-    const date = new Date(row.getValue("lentTime"));
+    const date = new Date(row.getValue("lendingStartTime"));
     return date.toLocaleDateString("nb-NO", {
       year: "numeric",
       month: "2-digit",
@@ -39,10 +42,24 @@ export const columns: ColumnDef<LendingAgreementDto>[] = [
   }
  },
  {
-  accessorKey: "returnedTime",
-  header: "Returned Time",
+  accessorKey: "expectedReturnTime",
+  header: "Expected Return Time",
   cell: ({ row }) => {
-    const returnedTime = row.getValue("returnedTime");
+    const date = new Date(row.getValue("expectedReturnTime"));
+    return date.toLocaleDateString("nb-NO", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+ },
+ {
+  accessorKey: "returnTime",
+  header: "Return Time",
+  cell: ({ row }) => {
+    const returnedTime = row.getValue("returnTime");
     if (!returnedTime) return "Not returned";
     const date = new Date(returnedTime as string);
     return date.toLocaleDateString("nb-NO", {
@@ -57,7 +74,7 @@ export const columns: ColumnDef<LendingAgreementDto>[] = [
  {
     id: "actions",
     cell: ({ row }) => {
-      return renderComponent(DataTableActions, { id: row.original.id.toString() });
+      return renderComponent(DataTableActions, { id: row.original.id});
     },
   },
 ];

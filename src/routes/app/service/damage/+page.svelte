@@ -8,6 +8,7 @@
     import * as Card from "$lib/components/ui/card/index.js";
     import { Input } from "$lib/components/ui/input";
     import Label from "$lib/components/ui/label/label.svelte";
+    import { getUserById } from "$lib/functions/get/getUserById";
 
     let desiredPage: number = $state(0);
     let size: number = $state(20);
@@ -17,11 +18,21 @@
 
     let reportPageDto: ToolTrackerPageDtoDamageReportDto | undefined = $state()
 
+    let enrichedReports: DamageReportDto[] = $state([]);
+
     $effect(() => {
         (async () => {
             reportPageDto = await getReports(desiredPage, size, sort, lendingAgreementId, toolId);
         })();
     });
+
+    $effect(() => {
+        (async () => {
+        if (reportPageDto) {
+            enrichedReports = await enrichReportsWithBorrowerNames(reportPageDto.page);
+        }
+        })();
+    })
 
     function handlePageChange(page: number) {
         desiredPage = page - 1; // Convert to 0-based indexing for API
@@ -45,6 +56,27 @@
     const pageSizeTriggerContent = $derived(
         pageSizeOptions.find((option) => option.value === size.toString())?.label ?? "Select page size"
     );
+
+    // Transform the data to include borrower names
+    async function enrichReportsWithBorrowerNames(reports: DamageReportDto[]) {
+    return Promise.all(
+        reports.map(async (report) => {
+        let borrowerName = "N/A";
+        if (report.lendingAgreement?.borrowerId) {
+            try {
+            const user = await getUserById(report.lendingAgreement.borrowerId);
+            borrowerName = user.name;
+            } catch (error) {
+            console.error("Failed to fetch user:", error);
+            }
+        }
+        return {
+            ...report,
+            borrowerName
+        };
+        })
+    );
+    }
 
 </script>
  
@@ -82,7 +114,7 @@
         </Card.Content>
     </Card.Root>
     <div class="w-full">
-            <DataTable data={reportPageDto.page} {columns} />
+            <DataTable data={enrichedReports} {columns} />
 
             {#if reportPageDto.totalItems > 0}
             <div class="flex items-center justify-between space-x-4">

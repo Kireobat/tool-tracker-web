@@ -2,8 +2,20 @@
  import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
  import { Button } from "$lib/components/ui/button/index.js";
  import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+    import type { PatchLendingAgreementDto } from "$lib/generated/tool-tracker";
+    import { patchAgreement } from "$lib/functions/patch/patchAgreement";
  
- let { id, reportId }: { id: string, reportId: string } = $props();
+ let { id }: { id: number} = $props();
+
+ async function handleMarkAsReturned() {
+    const patchLendingAgreementDto: PatchLendingAgreementDto = {
+        id,
+        returnTime: new Date(),
+    }
+
+    await patchAgreement(patchLendingAgreementDto);
+    window.location.reload();
+ }
 </script>
  
 <DropdownMenu.Root>
@@ -23,11 +35,8 @@
  <DropdownMenu.Content>
   <DropdownMenu.Group>
    <DropdownMenu.Label>Actions</DropdownMenu.Label>
-   <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(id)}>
-    Copy ID
-   </DropdownMenu.Item>
-   <DropdownMenu.Item onclick={() => navigator.clipboard.writeText(reportId)}>
-    Copy report ID
+   <DropdownMenu.Item onclick={handleMarkAsReturned}>
+    Mark as returned
    </DropdownMenu.Item>
   </DropdownMenu.Group>
   <DropdownMenu.Separator />
