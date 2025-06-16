@@ -1940,6 +1940,176 @@ How can I tell the datatable to resolve the user before rendering?
 
 _**Assistant**_
 
+The issue is that TanStack Table doesn't handle async cell renderers well. You have a few options to resolve user data before rendering:
+
+## Option 1: Resolve data in the parent component (Recommended)
+
+Transform your data before passing it to the table:
+
+````typescript
+import { renderComponent } from "$lib/components/ui/data-table";
+import type { LendingAgreementDto } from "$lib/generated/tool-tracker";
+import type { ColumnDef } from "@tanstack/table-core";
+import DataTableActions from "./data-table-actions.svelte";
+
+// Create an extended type that includes resolved user data
+export type ExtendedLendingAgreementDto = LendingAgreementDto & {
+  borrowerName?: string;
+};
+
+export const columns: ColumnDef<ExtendedLendingAgreementDto>[] = [
+ {
+  accessorKey: "id",
+  header: "ID",
+ },
+ {
+  accessorKey: "tool",
+  header: "Tool",
+  cell: ({ row }) => {
+    const tool = row.getValue("tool") as any;
+    return tool?.name ?? "N/A";
+  }
+ },
+ {
+  accessorKey: "borrowerName", // Use the resolved name instead
+  header: "Borrower",
+  cell: ({ row }) => {
+    return row.getValue("borrowerName") as string ?? "N/A";
+  }
+ },
+ // ... rest of your columns
+];
+````
+
+Then in your page component:
+
+````typescript
+// In your +page.svelte or +page.ts
+import { getUserById } from "$lib/functions/get/getUserById";
+
+// Transform the data to include borrower names
+async function enrichAgreementsWithBorrowerNames(agreements: LendingAgreementDto[]) {
+  return Promise.all(
+    agreements.map(async (agreement) => {
+      let borrowerName = "N/A";
+      if (agreement.borrowerId) {
+        try {
+          const user = await getUserById(agreement.borrowerId);
+          borrowerName = user.name;
+        } catch (error) {
+          console.error("Failed to fetch user:", error);
+        }
+      }
+      return {
+        ...agreement,
+        borrowerName
+      };
+    })
+  );
+}
+
+// Use it like:
+let enrichedAgreements = await enrichAgreementsWithBorrowerNames(rawAgreements);
+````
+
+## Option 2: Use a Svelte component for the cell
+
+Create a separate component that handles the async operation:
+
+````svelte
+<script lang="ts">
+  import { getUserById } from "$lib/functions/get/getUserById";
+  import { onMount } from "svelte";
+
+  export let borrowerId: number;
+  
+  let borrowerName = $state("Loading...");
+
+  onMount(async () => {
+    if (borrowerId) {
+      try {
+        const user = await getUserById(borrowerId);
+        borrowerName = user.name;
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        borrowerName = "Error loading";
+      }
+    } else {
+      borrowerName = "N/A";
+    }
+  });
+</script>
+
+{borrowerName}
+````
+
+Then use it in your columns:
+
+````typescript
+import BorrowerCell from "./borrower-cell.svelte";
+
+export const columns: ColumnDef<LendingAgreementDto>[] = [
+ // ... other columns
+ {
+  accessorKey: "borrowerId",
+  header: "Borrower",
+  cell: ({ row }) => {
+    const borrowerId = row.getValue("borrowerId") as number;
+    return renderComponent(BorrowerCell, { borrowerId });
+  }
+ },
+ // ... rest of columns
+];
+````
+
+## Option 3: Use a derived store for user data
+
+If you frequently need user data, create a user store:
+
+````typescript
+import { writable } from 'svelte/store';
+import { getUserById } from "$lib/functions/get/getUserById";
+
+const userCache = writable<Record<number, string>>({});
+
+export async function getCachedUserName(userId: number): Promise<string> {
+  return new Promise((resolve) => {
+    userCache.subscribe(cache => {
+      if (cache[userId]) {
+        resolve(cache[userId]);
+      }
+    })();
+    
+    // If not in cache, fetch it
+    if (!Object.hasOwnProperty.call(userCache, userId)) {
+      getUserById(userId).then(user => {
+        userCache.update(cache => ({
+          ...cache,
+          [userId]: user.name
+        }));
+      }).catch(() => {
+        userCache.update(cache => ({
+          ...cache,
+          [userId]: "Error"
+        }));
+      });
+    }
+  });
+}
+````
+
+**I recommend Option 1** as it's the most performant and keeps the data loading logic separate from the UI rendering. The table will render immediately with all data already resolved.
+
+---
+
+_**User**_
+
+write a better readme plz
+
+---
+
+_**Assistant**_
+
 
 
 ---
