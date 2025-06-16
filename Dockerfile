@@ -40,6 +40,10 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 
 # Copy the rest of the source files into the image.
 COPY . .
+
+# Force install the correct Rollup binary for the current platform
+RUN npm rebuild rollup --verbose
+
 # Run the build script.
 RUN npm run build
 
@@ -50,6 +54,9 @@ FROM node:${NODE_VERSION}-slim as final
 
 # Use production node environment by default.
 ENV NODE_ENV production
+
+# Set working directory
+WORKDIR /usr/src/app
 
 # Run the application as a non-root user.
 USER node
