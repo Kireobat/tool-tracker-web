@@ -3,8 +3,12 @@
     import Button from "$lib/components/ui/button/button.svelte";
     import { getTypes } from "$lib/functions/get/getTypes";
     import * as Select from "$lib/components/ui/select/index.js";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import * as Form from "$lib/components/ui/form/index.js";
     import { Input } from "$lib/components/ui/input";
     import Label from "$lib/components/ui/label/label.svelte";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Separator } from "$lib/components/ui/separator";
     import { createTool } from "$lib/functions/create/createTool";
 
 
@@ -37,7 +41,6 @@
     }
 
     const statusOptions = [
-        { value: "undefined", label: "Default (Available)" },
         ...Object.values(ToolDtoStatusEnum).map((enumValue) => ({
             value: enumValue,
             label: enumValue.charAt(0).toUpperCase() + enumValue.slice(1).toLowerCase()
@@ -45,7 +48,6 @@
     ];
 
     const toolTypeOptions = $derived([
-        { value: "undefined", label: "All Types" },
         ...(toolTypePageDto?.page.map((toolType) => ({
             value: toolType.id.toString(),
             label: toolType.name.charAt(0).toUpperCase() + toolType.name.slice(1).toLowerCase()
@@ -81,57 +83,128 @@
 
 </script>
 
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">Register New Tool</h1>
+            <p class="text-lg text-slate-600">Add a new tool to your inventory system</p>
+            <Badge variant="secondary" class="mt-2">Tool Registration</Badge>
+        </div>
 
-<div>
-    <h1>Register tool</h1>
-    <p>Register a new tool in the system.</p>
+        <!-- Form Card -->
+        <Card.Root class="shadow-xl border-0">
+            <Card.Header class="text-center pb-6">
+                <Card.Title class="text-2xl font-semibold text-slate-800">Tool Details</Card.Title>
+                <Card.Description class="text-slate-600">
+                    Please fill in the required information to register your tool
+                </Card.Description>
+            </Card.Header>
+            
+            <Card.Content>
+                <form class="space-y-6">
+                    <!-- Tool Name Field -->
+                    <div class="space-y-3">
+                        <Label for="tool-name" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Tool Name 
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="tool-name"
+                            type="text"
+                            placeholder="Enter tool name (e.g., Drill, Hammer, Saw)"
+                            bind:value={name}
+                            class="w-full h-11 text-base"
+                            required
+                        />
+                    </div>
 
-    <Input
-        type="text"
-        placeholder="Tool Name"
-        bind:value={name}
-        class="mb-4"/>
-    <Input
-        type="text"
-        placeholder="Serial Number"
-        bind:value={serial}
-        class="mb-4"/>
-    <Label for="tooltype" class="mb-1">Tool type</Label>
-            <Select.Root type="single" value={toolTypeId?.toString() ?? "undefined"} onValueChange={handleToolTypeChange}>
-                <Select.Trigger class="w-[180px]">
-                    {toolTypeTriggerContent}
-                </Select.Trigger>
-                <Select.Content>
-                    {#each toolTypeOptions as option (option.value)}
-                        <Select.Item
-                            value={option.value}
-                            label={option.label}
-                        >
-                            {option.label}
-                        </Select.Item>
-                    {/each}
-                </Select.Content>
-            </Select.Root>
+                    <Separator />
 
-            <Label for="status" class="mb-1">Status</Label>
-            <Select.Root type="single" value={status ?? "undefined"} onValueChange={handleStatusChange}>
-                <Select.Trigger class="w-[180px]">
-                    {statusTriggerContent}
-                </Select.Trigger>
-                <Select.Content>
-                    {#each statusOptions as option (option.value)}
-                        <Select.Item
-                            value={option.value}
-                            label={option.label}
-                        >
-                            {option.label}
-                        </Select.Item>
-                    {/each}
-                </Select.Content>
-            </Select.Root>
-    <Button
-        onclick={handleRegisterTool}
-        class="mt-4">
-        Register Tool
-    </Button>
+                    <!-- Serial Number Field -->
+                    <div class="space-y-3">
+                        <Label for="serial-number" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Serial Number
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Input
+                            id="serial-number"
+                            type="text"
+                            placeholder="Enter unique serial number"
+                            bind:value={serial}
+                            class="w-full h-11 text-base font-mono"
+                            required
+                        />
+                    </div>
+
+                    <Separator />
+
+                    <!-- Tool Type Field -->
+                    <div class="space-y-3">
+                        <Label for="tooltype" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Tool Type
+                            <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                        </Label>
+                        <Select.Root type="single" value={toolTypeId?.toString() ?? "undefined"} onValueChange={handleToolTypeChange}>
+                            <Select.Trigger class="w-full h-11">
+                                    {toolTypeTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each toolTypeOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <Separator />
+
+                    <!-- Status Field -->
+                    <div class="space-y-3">
+                        <Label for="status" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            Initial Status
+                            <Badge variant="outline" class="text-xs px-1 py-0">Optional</Badge>
+                        </Label>
+                        <Select.Root type="single" value={status ?? "undefined"} onValueChange={handleStatusChange}>
+                            <Select.Trigger class="w-full h-11">
+                                    {statusTriggerContent}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each statusOptions as option (option.value)}
+                                    <Select.Item
+                                        value={option.value}
+                                        label={option.label}
+                                    >
+                                        {option.label}
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+                </form>
+            </Card.Content>
+
+            <Card.Footer class="flex flex-col gap-4 pt-6">
+                <Button
+                    onclick={handleRegisterTool}
+                    class="w-full h-12 text-base font-semibold"
+                    size="lg"
+                >
+                    Register Tool
+                </Button>
+                
+                <Separator />
+                
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
+                    <span>fields must be completed</span>
+                </div>
+            </Card.Footer>
+        </Card.Root>
+    </div>
 </div>
