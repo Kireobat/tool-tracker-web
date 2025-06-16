@@ -8,7 +8,7 @@ ARG NODE_VERSION=20.11.1
 
 ################################################################################
 # Use node image for base image for all stages.
-FROM node:${NODE_VERSION}-alpine as base
+FROM node:${NODE_VERSION} as base
 
 # Set working directory for all build stages.
 WORKDIR /usr/src/app
@@ -48,7 +48,7 @@ RUN npm run build
 ################################################################################
 # Create a new stage to run the application with minimal runtime dependencies
 # where the necessary files are copied from the build stage.
-FROM node:${NODE_VERSION}-alpine as final
+FROM node:${NODE_VERSION}-slim as final
 
 # Use production node environment by default.
 ENV NODE_ENV production
