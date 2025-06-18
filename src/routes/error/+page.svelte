@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from '$app/stores';
+    import { page } from '$app/state';
     import Button from '$lib/components/ui/button/button.svelte';
     import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
     import { Badge } from '$lib/components/ui/badge';
@@ -7,6 +7,7 @@
     import { onMount } from 'svelte';
     import HouseIcon from '@lucide/svelte/icons/house';
     import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
+    import KeyRoundIcon from '@lucide/svelte/icons/key-round';
     import TriangleAlertIcon from '@lucide/svelte/icons/triangle-alert';
     import FileXIcon from '@lucide/svelte/icons/file-x';
     import LockIcon from '@lucide/svelte/icons/lock';
@@ -25,14 +26,8 @@
         }
     }
 
-    function goHome() {
-        if (typeof window !== 'undefined') {
-            window.location.href = '/';
-        }
-    }
-
-    const errorCode = $derived(parseInt($page.url.searchParams.get('status') || '500'));
-    const errorMessage = $derived($page.url.searchParams.get('message') || 'Something went wrong');
+    const errorCode = $derived(parseInt(page.url.searchParams.get('status') || '500'));
+    const errorMessage = $derived(page.url.searchParams.get('message') || 'Something went wrong');
 
     const errorIcon = $derived(() => {
         switch (errorCode) {
@@ -89,7 +84,7 @@
 
         <CardContent class="pt-6">
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onclick={goHome} variant="default" class="flex items-center gap-2">
+                <Button href="/" variant="default" class="flex items-center gap-2">
                     <HouseIcon class="w-4 h-4" />
                     Go home
                 </Button>
@@ -98,6 +93,13 @@
                     <ArrowLeftIcon class="w-4 h-4" />
                     Go back
                 </Button>
+
+                {#if errorCode === 401}
+                    <Button href="/login" variant="secondary" class="flex items-center gap-2">
+                        <KeyRoundIcon class="w-4 h-4" />
+                        Login
+                    </Button>
+                {/if}
             </div>
         </CardContent>
     </Card>

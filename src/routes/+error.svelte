@@ -7,10 +7,12 @@
     import { onMount } from 'svelte';
     import HouseIcon from '@lucide/svelte/icons/house';
     import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
+    import KeyRoundIcon from '@lucide/svelte/icons/key-round';
     import TriangleAlertIcon from '@lucide/svelte/icons/triangle-alert';
     import FileXIcon from '@lucide/svelte/icons/file-x';
     import LockIcon from '@lucide/svelte/icons/lock';
     import ZapIcon from '@lucide/svelte/icons/zap';
+    import ShieldXIcon from '@lucide/svelte/icons/shield-x';
 
     let mounted = $state(false);
 
@@ -24,19 +26,14 @@
         }
     }
 
-    function goHome() {
-        if (typeof window !== 'undefined') {
-            window.location.href = '/';
-        }
-    }
-
-    const errorCode = $derived(page.status || 500);
-    const errorMessage = $derived(page.error?.message || 'Something went wrong');
+    const errorCode = $derived(parseInt(page.url.searchParams.get('status') || '500'));
+    const errorMessage = $derived(page.url.searchParams.get('message') || 'Something went wrong');
 
     const errorIcon = $derived(() => {
         switch (errorCode) {
-            case 404: return FileXIcon;
+            case 401: return ShieldXIcon;
             case 403: return LockIcon;
+            case 404: return FileXIcon;
             case 500: return ZapIcon;
             default: return TriangleAlertIcon;
         }
@@ -44,8 +41,9 @@
 
     const errorVariant = $derived(() => {
         switch (errorCode) {
-            case 404: return 'secondary';
+            case 401: return 'destructive';
             case 403: return 'destructive';
+            case 404: return 'secondary';
             case 500: return 'destructive';
             default: return 'outline';
         }
@@ -58,16 +56,18 @@
             <div class="flex justify-center">
                 <Badge variant={errorVariant()} class="text-lg px-3 py-1">
                     {@const IconComponent = errorIcon()}
-                    <IconComponent class="size-4" />
+                    <IconComponent class="scale-150" />
                     Error {errorCode}
                 </Badge>
             </div>
             
             <CardTitle class="text-2xl">
-                {#if errorCode === 404}
-                    Page not found
+                {#if errorCode === 401}
+                    Unauthorized
                 {:else if errorCode === 403}
                     Access forbidden
+                {:else if errorCode === 404}
+                    Page not found
                 {:else if errorCode === 500}
                     Internal server error
                 {:else}
@@ -76,15 +76,7 @@
             </CardTitle>
             
             <CardDescription class="text-base">
-                {#if errorCode === 404}
-                    The page you're looking for doesn't exist or has been moved.
-                {:else if errorCode === 403}
-                    You don't have permission to access this resource.
-                {:else if errorCode === 500}
-                    We're experiencing technical difficulties. Please try again later.
-                {:else}
-                    {errorMessage}
-                {/if}
+                {errorMessage}
             </CardDescription>
         </CardHeader>
 
@@ -97,10 +89,17 @@
                     Go home
                 </Button>
                 
-                <Button onclick={goBack} variant="secondary" class="flex items-center gap-2" href="javascript:void(0);">
+                <Button onclick={goBack} variant="secondary" class="flex items-center gap-2">
                     <ArrowLeftIcon class="w-4 h-4" />
                     Go back
                 </Button>
+
+                {#if errorCode === 401}
+                    <Button href="/login" variant="secondary" class="flex items-center gap-2">
+                        <KeyRoundIcon class="w-4 h-4" />
+                        Login
+                    </Button>
+                {/if}
             </div>
         </CardContent>
     </Card>

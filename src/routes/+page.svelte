@@ -12,6 +12,7 @@
     import Button from "$lib/components/ui/button/button.svelte";
     import SunIcon from "@lucide/svelte/icons/sun";
     import MoonIcon from "@lucide/svelte/icons/moon";
+    import KeyRoundIcon from '@lucide/svelte/icons/key-round';
     import { toggleMode } from "mode-watcher";
 
     interface Props {
@@ -100,7 +101,11 @@
                 class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
             />
             <span class="sr-only">Toggle theme</span>
-            </Button>
+        </Button>
+        <Button href="/login" variant="secondary" class="flex items-center gap-2">
+            <KeyRoundIcon class="w-4 h-4" />
+            Login
+        </Button>
         <Button href="/app" variant="outline">
             Manage
         </Button>
