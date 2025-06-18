@@ -20,19 +20,19 @@ import { mapValues } from '../runtime';
  */
 export interface CreateFeeDto {
     /**
-     * 
+     * ID of the lending agreement associated with the fee
      * @type {number}
      * @memberof CreateFeeDto
      */
     lendingAgreementId: number;
     /**
-     * 
+     * Reason for the fee
      * @type {string}
      * @memberof CreateFeeDto
      */
     reason: string;
     /**
-     * 
+     * Fee amount in NOK
      * @type {number}
      * @memberof CreateFeeDto
      */

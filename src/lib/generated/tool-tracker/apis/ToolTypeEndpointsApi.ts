@@ -49,6 +49,8 @@ export interface GetToolTypesRequest {
 export class ToolTypeEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Creates a new tool type based on the provided name. Requires EMPLOYEE role.
+     * Create a new tool type
      */
     async createToolTypeRaw(requestParameters: CreateToolTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTypeDto>> {
         if (requestParameters['name'] == null) {
@@ -77,6 +79,8 @@ export class ToolTypeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates a new tool type based on the provided name. Requires EMPLOYEE role.
+     * Create a new tool type
      */
     async createToolType(requestParameters: CreateToolTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTypeDto> {
         const response = await this.createToolTypeRaw(requestParameters, initOverrides);
@@ -84,6 +88,8 @@ export class ToolTypeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a tool type by its ID. Requires EMPLOYEE role.
+     * Get a tool type by ID
      */
     async getToolTypeRaw(requestParameters: GetToolTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTypeDto>> {
         if (requestParameters['id'] == null) {
@@ -108,6 +114,8 @@ export class ToolTypeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a tool type by its ID. Requires EMPLOYEE role.
+     * Get a tool type by ID
      */
     async getToolType(requestParameters: GetToolTypeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTypeDto> {
         const response = await this.getToolTypeRaw(requestParameters, initOverrides);
@@ -115,6 +123,8 @@ export class ToolTypeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all tool types, optionally filtered by name. Does not require authentication.
+     * Get all tool types
      */
     async getToolTypesRaw(requestParameters: GetToolTypesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoToolTypeDto>> {
         const queryParameters: any = {};
@@ -148,6 +158,8 @@ export class ToolTypeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all tool types, optionally filtered by name. Does not require authentication.
+     * Get all tool types
      */
     async getToolTypes(requestParameters: GetToolTypesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoToolTypeDto> {
         const response = await this.getToolTypesRaw(requestParameters, initOverrides);

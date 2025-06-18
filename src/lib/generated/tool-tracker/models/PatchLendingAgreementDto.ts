@@ -20,37 +20,37 @@ import { mapValues } from '../runtime';
  */
 export interface PatchLendingAgreementDto {
     /**
-     * 
+     * ID of the lending agreement to be patched
      * @type {number}
      * @memberof PatchLendingAgreementDto
      */
     id: number;
     /**
-     * 
+     * ID of the tool being lent out
      * @type {number}
      * @memberof PatchLendingAgreementDto
      */
     toolId?: number;
     /**
-     * 
+     * ID of the borrower
      * @type {number}
      * @memberof PatchLendingAgreementDto
      */
     borrowerId?: number;
     /**
-     * 
+     * Time when the lending starts
      * @type {Date}
      * @memberof PatchLendingAgreementDto
      */
     lendingStartTime?: Date;
     /**
-     * 
+     * Expected return time for the tool
      * @type {Date}
      * @memberof PatchLendingAgreementDto
      */
     expectedReturnTime?: Date;
     /**
-     * 
+     * Actual return time for the tool
      * @type {Date}
      * @memberof PatchLendingAgreementDto
      */

@@ -20,19 +20,19 @@ import { mapValues } from '../runtime';
  */
 export interface CreateDamageReportDto {
     /**
-     * 
+     * ID of the lending agreement associated with the damage report
      * @type {number}
      * @memberof CreateDamageReportDto
      */
     lendingAgreementId?: number;
     /**
-     * 
+     * ID of the tool associated with the damage report
      * @type {number}
      * @memberof CreateDamageReportDto
      */
     toolId?: number;
     /**
-     * 
+     * Description of the damage
      * @type {string}
      * @memberof CreateDamageReportDto
      */

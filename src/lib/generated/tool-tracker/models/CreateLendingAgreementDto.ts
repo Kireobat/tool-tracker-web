@@ -20,25 +20,25 @@ import { mapValues } from '../runtime';
  */
 export interface CreateLendingAgreementDto {
     /**
-     * 
+     * ID of the tool being lent out
      * @type {number}
      * @memberof CreateLendingAgreementDto
      */
     toolId: number;
     /**
-     * 
+     * ID of the borrower
      * @type {number}
      * @memberof CreateLendingAgreementDto
      */
     borrowerId: number;
     /**
-     * 
+     * Time when the lending starts
      * @type {Date}
      * @memberof CreateLendingAgreementDto
      */
     lendingStartTime?: Date;
     /**
-     * 
+     * Expected return time for the tool
      * @type {Date}
      * @memberof CreateLendingAgreementDto
      */

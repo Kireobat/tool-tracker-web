@@ -20,19 +20,19 @@ import { mapValues } from '../runtime';
  */
 export interface RegisterUserDto {
     /**
-     * 
+     * Name of the user
      * @type {string}
      * @memberof RegisterUserDto
      */
     name: string;
     /**
-     * 
+     * Email address of the user
      * @type {string}
      * @memberof RegisterUserDto
      */
     email: string;
     /**
-     * 
+     * Password for the user account
      * @type {string}
      * @memberof RegisterUserDto
      */

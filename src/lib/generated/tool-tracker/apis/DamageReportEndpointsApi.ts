@@ -53,6 +53,8 @@ export interface GetReportsRequest {
 export class DamageReportEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Creates a new damage report based on the provided details. Requires EMPLOYEE role.
+     * Create a new damage report
      */
     async createReportRaw(requestParameters: CreateReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DamageReportDto>> {
         if (requestParameters['createDamageReportDto'] == null) {
@@ -80,6 +82,8 @@ export class DamageReportEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates a new damage report based on the provided details. Requires EMPLOYEE role.
+     * Create a new damage report
      */
     async createReport(requestParameters: CreateReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DamageReportDto> {
         const response = await this.createReportRaw(requestParameters, initOverrides);
@@ -87,6 +91,8 @@ export class DamageReportEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a damage report by its ID. Requires EMPLOYEE role.
+     * Get a damage report by ID
      */
     async getReportRaw(requestParameters: GetReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DamageReportDto>> {
         if (requestParameters['id'] == null) {
@@ -111,6 +117,8 @@ export class DamageReportEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a damage report by its ID. Requires EMPLOYEE role.
+     * Get a damage report by ID
      */
     async getReport(requestParameters: GetReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DamageReportDto> {
         const response = await this.getReportRaw(requestParameters, initOverrides);
@@ -118,6 +126,8 @@ export class DamageReportEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all damage reports, optionally filtered by lending agreement ID or tool ID. Requires EMPLOYEE role.
+     * Get all damage reports
      */
     async getReportsRaw(requestParameters: GetReportsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoDamageReportDto>> {
         const queryParameters: any = {};
@@ -155,6 +165,8 @@ export class DamageReportEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all damage reports, optionally filtered by lending agreement ID or tool ID. Requires EMPLOYEE role.
+     * Get all damage reports
      */
     async getReports(requestParameters: GetReportsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoDamageReportDto> {
         const response = await this.getReportsRaw(requestParameters, initOverrides);

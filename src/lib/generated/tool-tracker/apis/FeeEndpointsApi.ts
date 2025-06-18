@@ -56,6 +56,8 @@ export interface GetFeesRequest {
 export class FeeEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Creates a new fee based on the provided details. Requires EMPLOYEE role.
+     * Create a new fee
      */
     async createFeeRaw(requestParameters: CreateFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FeeDto>> {
         if (requestParameters['createFeeDto'] == null) {
@@ -83,6 +85,8 @@ export class FeeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates a new fee based on the provided details. Requires EMPLOYEE role.
+     * Create a new fee
      */
     async createFee(requestParameters: CreateFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FeeDto> {
         const response = await this.createFeeRaw(requestParameters, initOverrides);
@@ -90,6 +94,8 @@ export class FeeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a fee by its ID. Requires EMPLOYEE role.
+     * Get a fee by ID
      */
     async getFeeRaw(requestParameters: GetFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FeeDto>> {
         if (requestParameters['id'] == null) {
@@ -114,6 +120,8 @@ export class FeeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a fee by its ID. Requires EMPLOYEE role.
+     * Get a fee by ID
      */
     async getFee(requestParameters: GetFeeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FeeDto> {
         const response = await this.getFeeRaw(requestParameters, initOverrides);
@@ -121,6 +129,8 @@ export class FeeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all fees, optionally filtered by lending agreement ID, borrower ID, status, or fee amount range. Requires EMPLOYEE role.
+     * Get all fees
      */
     async getFeesRaw(requestParameters: GetFeesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoFeeDto>> {
         const queryParameters: any = {};
@@ -170,6 +180,8 @@ export class FeeEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all fees, optionally filtered by lending agreement ID, borrower ID, status, or fee amount range. Requires EMPLOYEE role.
+     * Get all fees
      */
     async getFees(requestParameters: GetFeesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoFeeDto> {
         const response = await this.getFeesRaw(requestParameters, initOverrides);

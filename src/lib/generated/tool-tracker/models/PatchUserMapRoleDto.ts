@@ -20,13 +20,13 @@ import { mapValues } from '../runtime';
  */
 export interface PatchUserMapRoleDto {
     /**
-     * 
+     * ID of the user to be mapped to a role
      * @type {number}
      * @memberof PatchUserMapRoleDto
      */
     userId: number;
     /**
-     * 
+     * ID of the role to be assigned to the user
      * @type {number}
      * @memberof PatchUserMapRoleDto
      */

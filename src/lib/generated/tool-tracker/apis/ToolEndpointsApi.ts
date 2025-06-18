@@ -55,6 +55,8 @@ export interface RegisterToolRequest {
 export class ToolEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Retrieves a tool by its ID. If the tool is not available, access is restricted based on user authentication and role.
+     * Get a tool by ID
      */
     async getToolRaw(requestParameters: GetToolRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolDto>> {
         if (requestParameters['id'] == null) {
@@ -79,6 +81,8 @@ export class ToolEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a tool by its ID. If the tool is not available, access is restricted based on user authentication and role.
+     * Get a tool by ID
      */
     async getTool(requestParameters: GetToolRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolDto> {
         const response = await this.getToolRaw(requestParameters, initOverrides);
@@ -86,6 +90,8 @@ export class ToolEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all tools, optionally filtered by name, serial number, tool type ID, or status. If the user is not authenticated or does not have the EMPLOYEE role, only available tools are returned.
+     * Get all tools
      */
     async getToolsRaw(requestParameters: GetToolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoToolDto>> {
         const queryParameters: any = {};
@@ -131,6 +137,8 @@ export class ToolEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all tools, optionally filtered by name, serial number, tool type ID, or status. If the user is not authenticated or does not have the EMPLOYEE role, only available tools are returned.
+     * Get all tools
      */
     async getTools(requestParameters: GetToolsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoToolDto> {
         const response = await this.getToolsRaw(requestParameters, initOverrides);
@@ -138,6 +146,8 @@ export class ToolEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Registers a new tool based on the provided details. Requires EMPLOYEE role.
+     * Register a new tool
      */
     async registerToolRaw(requestParameters: RegisterToolRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolDto>> {
         if (requestParameters['registerToolDto'] == null) {
@@ -165,6 +175,8 @@ export class ToolEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Registers a new tool based on the provided details. Requires EMPLOYEE role.
+     * Register a new tool
      */
     async registerTool(requestParameters: RegisterToolRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolDto> {
         const response = await this.registerToolRaw(requestParameters, initOverrides);

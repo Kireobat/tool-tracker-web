@@ -60,6 +60,8 @@ export interface RegisterUserRequest {
 export class UserEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Retrieves a user by their ID. Requires EMPLOYEE role.
+     * Get a user by ID
      */
     async getUserRaw(requestParameters: GetUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDto>> {
         if (requestParameters['id'] == null) {
@@ -84,6 +86,8 @@ export class UserEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a user by their ID. Requires EMPLOYEE role.
+     * Get a user by ID
      */
     async getUser(requestParameters: GetUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
         const response = await this.getUserRaw(requestParameters, initOverrides);
@@ -91,6 +95,8 @@ export class UserEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all users, optionally filtered by name or email. Requires EMPLOYEE role.
+     * Get all users
      */
     async getUsersRaw(requestParameters: GetUsersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoUserDto>> {
         const queryParameters: any = {};
@@ -128,6 +134,8 @@ export class UserEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all users, optionally filtered by name or email. Requires EMPLOYEE role.
+     * Get all users
      */
     async getUsers(requestParameters: GetUsersRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoUserDto> {
         const response = await this.getUsersRaw(requestParameters, initOverrides);
@@ -135,6 +143,8 @@ export class UserEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Logs in a user based on the provided credentials. If successful, the user will be authenticated and a session will be created.
+     * Login a user
      */
     async loginRaw(requestParameters: LoginRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerResponseDto>> {
         if (requestParameters['loginDto'] == null) {
@@ -162,6 +172,8 @@ export class UserEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Logs in a user based on the provided credentials. If successful, the user will be authenticated and a session will be created.
+     * Login a user
      */
     async login(requestParameters: LoginRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerResponseDto> {
         const response = await this.loginRaw(requestParameters, initOverrides);
@@ -169,6 +181,8 @@ export class UserEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Registers a new user based on the provided details. The user will be assigned a default role. Does not require authentication.
+     * Register a new user
      */
     async registerUserRaw(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerResponseDto>> {
         if (requestParameters['registerUserDto'] == null) {
@@ -196,6 +210,8 @@ export class UserEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Registers a new user based on the provided details. The user will be assigned a default role. Does not require authentication.
+     * Register a new user
      */
     async registerUser(requestParameters: RegisterUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerResponseDto> {
         const response = await this.registerUserRaw(requestParameters, initOverrides);

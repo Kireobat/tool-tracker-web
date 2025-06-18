@@ -31,6 +31,8 @@ import {
 export class AuthEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Returns the profile information of the authenticated user.
+     * Get the profile of the authenticated user
      */
     async getProfileRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDto>> {
         const queryParameters: any = {};
@@ -48,6 +50,8 @@ export class AuthEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Returns the profile information of the authenticated user.
+     * Get the profile of the authenticated user
      */
     async getProfile(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
         const response = await this.getProfileRaw(initOverrides);
@@ -55,6 +59,8 @@ export class AuthEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Returns true if the authenticated user has the ADMIN role, 401 if not.
+     * Check if the authenticated user is an admin
      */
     async isAdminRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<boolean>> {
         const queryParameters: any = {};
@@ -76,6 +82,8 @@ export class AuthEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Returns true if the authenticated user has the ADMIN role, 401 if not.
+     * Check if the authenticated user is an admin
      */
     async isAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean> {
         const response = await this.isAdminRaw(initOverrides);
@@ -83,6 +91,8 @@ export class AuthEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Returns true if the authenticated user has the EMPLOYEE role, 401 if not.
+     * Check if the authenticated user is an employee
      */
     async isEmployeeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<boolean>> {
         const queryParameters: any = {};
@@ -104,6 +114,8 @@ export class AuthEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Returns true if the authenticated user has the EMPLOYEE role, 401 if not.
+     * Check if the authenticated user is an employee
      */
     async isEmployee(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<boolean> {
         const response = await this.isEmployeeRaw(initOverrides);

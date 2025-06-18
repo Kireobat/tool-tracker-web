@@ -56,6 +56,8 @@ export interface GetServiceEventsByIdRequest {
 export class ToolServiceEventEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Creates a new tool service event based on the provided details. Requires EMPLOYEE role.
+     * Create a new tool service event
      */
     async createServiceEventRaw(requestParameters: CreateServiceEventRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolServiceEventDto>> {
         if (requestParameters['createToolServiceEventDto'] == null) {
@@ -83,6 +85,8 @@ export class ToolServiceEventEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates a new tool service event based on the provided details. Requires EMPLOYEE role.
+     * Create a new tool service event
      */
     async createServiceEvent(requestParameters: CreateServiceEventRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolServiceEventDto> {
         const response = await this.createServiceEventRaw(requestParameters, initOverrides);
@@ -90,6 +94,8 @@ export class ToolServiceEventEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all tool service events, optionally filtered by tool ID, damage report ID, lending agreement ID, or service date range. Requires EMPLOYEE role.
+     * Get all tool service events
      */
     async getServiceEventsRaw(requestParameters: GetServiceEventsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoToolServiceEventDto>> {
         const queryParameters: any = {};
@@ -139,6 +145,8 @@ export class ToolServiceEventEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all tool service events, optionally filtered by tool ID, damage report ID, lending agreement ID, or service date range. Requires EMPLOYEE role.
+     * Get all tool service events
      */
     async getServiceEvents(requestParameters: GetServiceEventsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoToolServiceEventDto> {
         const response = await this.getServiceEventsRaw(requestParameters, initOverrides);
@@ -146,6 +154,8 @@ export class ToolServiceEventEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a tool service event by its ID. Requires EMPLOYEE role.
+     * Get a tool service event by ID
      */
     async getServiceEventsByIdRaw(requestParameters: GetServiceEventsByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolServiceEventDto>> {
         if (requestParameters['id'] == null) {
@@ -170,6 +180,8 @@ export class ToolServiceEventEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a tool service event by its ID. Requires EMPLOYEE role.
+     * Get a tool service event by ID
      */
     async getServiceEventsById(requestParameters: GetServiceEventsByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolServiceEventDto> {
         const response = await this.getServiceEventsByIdRaw(requestParameters, initOverrides);

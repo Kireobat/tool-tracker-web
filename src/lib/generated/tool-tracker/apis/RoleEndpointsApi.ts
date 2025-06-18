@@ -43,7 +43,7 @@ export interface GetRolesRequest {
     size?: number;
     sort?: Array<string>;
     name?: string;
-    email?: string;
+    description?: string;
 }
 
 export interface GiveRoleRequest {
@@ -60,6 +60,8 @@ export interface TakeRoleRequest {
 export class RoleEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Retrieves a role by its ID. Requires EMPLOYEE role.
+     * Get a role by ID
      */
     async getRoleRaw(requestParameters: GetRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<RoleDto>> {
         if (requestParameters['id'] == null) {
@@ -84,6 +86,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a role by its ID. Requires EMPLOYEE role.
+     * Get a role by ID
      */
     async getRole(requestParameters: GetRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<RoleDto> {
         const response = await this.getRoleRaw(requestParameters, initOverrides);
@@ -91,6 +95,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all roles, optionally filtered by name or description. Requires EMPLOYEE role.
+     * Get all roles
      */
     async getRolesRaw(requestParameters: GetRolesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoRoleDto>> {
         const queryParameters: any = {};
@@ -111,8 +117,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
             queryParameters['name'] = requestParameters['name'];
         }
 
-        if (requestParameters['email'] != null) {
-            queryParameters['email'] = requestParameters['email'];
+        if (requestParameters['description'] != null) {
+            queryParameters['description'] = requestParameters['description'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -128,6 +134,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all roles, optionally filtered by name or description. Requires EMPLOYEE role.
+     * Get all roles
      */
     async getRoles(requestParameters: GetRolesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoRoleDto> {
         const response = await this.getRolesRaw(requestParameters, initOverrides);
@@ -135,6 +143,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Assigns a role to a user based on the provided details. Requires ADMIN role.
+     * Assign a role to a user
      */
     async giveRoleRaw(requestParameters: GiveRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserMapRoleDto>> {
         if (requestParameters['patchUserMapRoleDto'] == null) {
@@ -152,7 +162,7 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
 
         const response = await this.request({
             path: `/api/v1/roles/give`,
-            method: 'GET',
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: PatchUserMapRoleDtoToJSON(requestParameters['patchUserMapRoleDto']),
@@ -162,6 +172,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Assigns a role to a user based on the provided details. Requires ADMIN role.
+     * Assign a role to a user
      */
     async giveRole(requestParameters: GiveRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserMapRoleDto> {
         const response = await this.giveRoleRaw(requestParameters, initOverrides);
@@ -169,6 +181,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Removes a role from a user based on the provided details. Requires ADMIN role.
+     * Remove a role from a user
      */
     async takeRoleRaw(requestParameters: TakeRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerResponseDto>> {
         if (requestParameters['patchUserMapRoleDto'] == null) {
@@ -186,7 +200,7 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
 
         const response = await this.request({
             path: `/api/v1/roles/take`,
-            method: 'GET',
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: PatchUserMapRoleDtoToJSON(requestParameters['patchUserMapRoleDto']),
@@ -196,6 +210,8 @@ export class RoleEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Removes a role from a user based on the provided details. Requires ADMIN role.
+     * Remove a role from a user
      */
     async takeRole(requestParameters: TakeRoleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerResponseDto> {
         const response = await this.takeRoleRaw(requestParameters, initOverrides);

@@ -74,12 +74,10 @@
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item>
-						<BadgeCheckIcon />
-						Account
-					</DropdownMenu.Item>
-					<DropdownMenu.Item>
-						<CreditCardIcon />
-						Billing
+						<a href="/app/account" class="flex items-center gap-2">
+							<BadgeCheckIcon />
+							Account
+						</a>
 					</DropdownMenu.Item>
 					<DropdownMenu.Item>
 						<BellIcon />

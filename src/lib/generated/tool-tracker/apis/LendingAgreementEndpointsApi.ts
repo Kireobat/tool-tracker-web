@@ -62,6 +62,8 @@ export interface PatchAgreementRequest {
 export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
 
     /**
+     * Creates a new lending agreement based on the provided details. Requires EMPLOYEE role.
+     * Create a new lending agreement
      */
     async createAgreementRaw(requestParameters: CreateAgreementRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LendingAgreementDto>> {
         if (requestParameters['createLendingAgreementDto'] == null) {
@@ -89,6 +91,8 @@ export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates a new lending agreement based on the provided details. Requires EMPLOYEE role.
+     * Create a new lending agreement
      */
     async createAgreement(requestParameters: CreateAgreementRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LendingAgreementDto> {
         const response = await this.createAgreementRaw(requestParameters, initOverrides);
@@ -96,6 +100,8 @@ export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a lending agreement by its ID. Requires EMPLOYEE role.
+     * Get a lending agreement by ID
      */
     async getAgreementRaw(requestParameters: GetAgreementRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LendingAgreementDto>> {
         if (requestParameters['id'] == null) {
@@ -120,6 +126,8 @@ export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a lending agreement by its ID. Requires EMPLOYEE role.
+     * Get a lending agreement by ID
      */
     async getAgreement(requestParameters: GetAgreementRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LendingAgreementDto> {
         const response = await this.getAgreementRaw(requestParameters, initOverrides);
@@ -127,6 +135,8 @@ export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all lending agreements, optionally filtered by tool ID, borrower ID, or lending date range. Requires EMPLOYEE role.
+     * Get all lending agreements
      */
     async getAgreementsRaw(requestParameters: GetAgreementsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ToolTrackerPageDtoLendingAgreementDto>> {
         const queryParameters: any = {};
@@ -172,6 +182,8 @@ export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Retrieves a paginated list of all lending agreements, optionally filtered by tool ID, borrower ID, or lending date range. Requires EMPLOYEE role.
+     * Get all lending agreements
      */
     async getAgreements(requestParameters: GetAgreementsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ToolTrackerPageDtoLendingAgreementDto> {
         const response = await this.getAgreementsRaw(requestParameters, initOverrides);
@@ -179,6 +191,8 @@ export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Updates an existing lending agreement with the provided details. Requires EMPLOYEE role.
+     * Patch a lending agreement
      */
     async patchAgreementRaw(requestParameters: PatchAgreementRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LendingAgreementDto>> {
         if (requestParameters['patchLendingAgreementDto'] == null) {
@@ -206,6 +220,8 @@ export class LendingAgreementEndpointsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Updates an existing lending agreement with the provided details. Requires EMPLOYEE role.
+     * Patch a lending agreement
      */
     async patchAgreement(requestParameters: PatchAgreementRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LendingAgreementDto> {
         const response = await this.patchAgreementRaw(requestParameters, initOverrides);

@@ -4,10 +4,13 @@ import { ResponseError, ToolTrackerResponseDtoStatusEnum, type ToolTrackerRespon
 import { addFeedback } from "../feedback.svelte";
 
 
-export const isEmployee = async (): Promise<boolean> => {
+export const isEmployee = async (disableRedirect?: boolean): Promise<boolean> => {
     try {
         return await authApi.isEmployee();
     } catch (err) {
+        if (disableRedirect) {
+            return false;
+        }
         if (err instanceof ResponseError) {
             const res = await err.response.json() as ToolTrackerResponseDto;
             console.error(res);

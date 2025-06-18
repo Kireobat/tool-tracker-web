@@ -20,25 +20,25 @@ import { mapValues } from '../runtime';
  */
 export interface RegisterToolDto {
     /**
-     * 
+     * Name of the tool
      * @type {string}
      * @memberof RegisterToolDto
      */
     name: string;
     /**
-     * 
+     * Serial number of the tool
      * @type {string}
      * @memberof RegisterToolDto
      */
     serial: string;
     /**
-     * 
+     * Type of the tool (must be an ID from toolTypes)
      * @type {number}
      * @memberof RegisterToolDto
      */
     type: number;
     /**
-     * 
+     * Status of the tool
      * @type {string}
      * @memberof RegisterToolDto
      */

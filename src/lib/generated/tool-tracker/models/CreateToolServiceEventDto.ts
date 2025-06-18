@@ -20,19 +20,19 @@ import { mapValues } from '../runtime';
  */
 export interface CreateToolServiceEventDto {
     /**
-     * 
+     * ID refering to the associated damage report
      * @type {number}
      * @memberof CreateToolServiceEventDto
      */
     damageReportId: number;
     /**
-     * 
+     * Time when the service event starts
      * @type {Date}
      * @memberof CreateToolServiceEventDto
      */
     serviceStartTime?: Date;
     /**
-     * 
+     * Time when the service event stops
      * @type {Date}
      * @memberof CreateToolServiceEventDto
      */

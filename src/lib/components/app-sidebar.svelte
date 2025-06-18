@@ -5,94 +5,36 @@
 	import SendIcon from "@lucide/svelte/icons/send";
 	import LandmarkIcon from "@lucide/svelte/icons/landmark";
 	import HammerIcon from "@lucide/svelte/icons/hammer";
+    import KeyRoundIcon from '@lucide/svelte/icons/key-round';
 
 	import { user } from "$lib/functions/user.svelte";
 
-	const data = $derived({
+	interface SidebarData {
+		user: {
+			name: string;
+			email: string;
+			avatar: string;
+		};
+		navMain: {
+			title: string;
+			url: string;
+			icon: any;
+			items?: { title: string; url: string }[];
+		}[];
+		navSecondary: {
+			title: string;
+			url: string;
+			icon: any;
+		}[];
+	}
+
+	const data: SidebarData = $derived({
 		user: {
 			name: user.current?.name || "Loading...",
 			email: user.current?.email || "Loading...",
 			avatar: "/avatars/shadcn.jpg",
 		},
-		navMain: [
-			{
-				title: "Tools Management",
-				url: "/app/tools",
-				icon: HammerIcon,
-				isActive: false,
-				items: [
-					{
-						title: "Tools Overview",
-						url: "/app/tools",
-					},
-					{
-						title: "Register Tool",
-						url: "/app/tools/register",
-					},
-					{
-						title: "Tool Types",
-						url: "/app/tools/types",
-					},
-					{
-						title: "Create Type",
-						url: "/app/tools/types/create",
-					}
-				],
-			},
-			{
-				title: "Lending & Agreements",
-				url: "/app/agreements",
-				icon: ReceiptText,
-				items: [
-					{
-						title: "Lending Agreements",
-						url: "/app/agreements",
-					},
-					{
-						title: "Create new agreement",
-						url: "/app/agreements/create",
-					}
-				],
-			},
-			{
-				title: "Service & Maintenance",
-				url: "/app/service",
-				icon: WrenchIcon,
-				items: [
-					{
-						title: "Service Events",
-						url: "/app/service",
-					},
-					{
-						title: "Schedule Service",
-						url: "/app/service/create",
-					},
-					{
-						title: "Damage Reports",
-						url: "/app/service/damage",
-					},
-					{
-						title: "Report Damage",
-						url: "/app/service/damage/create",
-					},
-				],
-			},
-			{
-				title: "Financial Management",
-				url: "/app/fees",
-				icon: LandmarkIcon,
-				items: [
-					{
-						title: "Fees Overview",
-						url: "/app/fees",
-					},
-					{
-						title: "Create Fee",
-						url: "/app/fees/create",
-					}
-				],
-			}
-		],
+		navMain: [],
 		navSecondary: [
 			{
 				title: "Support",
@@ -117,12 +59,95 @@
 	import { onMount, type ComponentProps } from "svelte";
     import { isAdmin } from "$lib/functions/auth/isAdmin";
 	import ShieldIcon from "@lucide/svelte/icons/shield";
+    import { isEmployee } from "$lib/functions/auth/isEmployee";
+    import { Button } from "./ui/button";
 
 	let admin: boolean = $state(false);
+	let employee: boolean = $state(false);
 
     // Create a reactive navMain that includes admin items when user is admin
     let navMain = $derived(() => {
         const baseNav = [...data.navMain];
+
+		if (employee) {
+			baseNav.push({
+				title: "Tools Management",
+				url: "/app/tools",
+				icon: HammerIcon,
+				items: [
+					{
+						title: "Tools Overview",
+						url: "/app/tools",
+					},
+					{
+						title: "Register Tool",
+						url: "/app/tools/register",
+					},
+					{
+						title: "Tool Types",
+						url: "/app/tools/types",
+					},
+					{
+						title: "Create Type",
+						url: "/app/tools/types/create",
+					}
+				],
+			})
+			baseNav.push(
+			{
+				title: "Lending & Agreements",
+				url: "/app/agreements",
+				icon: ReceiptText,
+				items: [
+					{
+						title: "Lending Agreements",
+						url: "/app/agreements",
+					},
+					{
+						title: "Create new agreement",
+						url: "/app/agreements/create",
+					}
+				],
+			})
+			baseNav.push({
+				title: "Service & Maintenance",
+				url: "/app/service",
+				icon: WrenchIcon,
+				items: [
+					{
+						title: "Service Events",
+						url: "/app/service",
+					},
+					{
+						title: "Schedule Service",
+						url: "/app/service/create",
+					},
+					{
+						title: "Damage Reports",
+						url: "/app/service/damage",
+					},
+					{
+						title: "Report Damage",
+						url: "/app/service/damage/create",
+					},
+				],
+			})
+			baseNav.push({
+				title: "Financial Management",
+				url: "/app/fees",
+				icon: LandmarkIcon,
+				items: [
+					{
+						title: "Fees Overview",
+						url: "/app/fees",
+					},
+					{
+						title: "Create Fee",
+						url: "/app/fees/create",
+					}
+				],
+			})
+		}
         
         if (admin) {
             baseNav.push({
@@ -150,8 +175,8 @@
     });
 
 	onMount(async () => {
-        admin = await isAdmin();
-        console.log("Is Admin:", admin);
+        admin = await isAdmin(true);
+		employee = await isEmployee(true);
     });
 
 	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
@@ -184,6 +209,13 @@
 		<NavSecondary items={data.navSecondary} class="mt-auto" />
 	</Sidebar.Content>
 	<Sidebar.Footer>
+		{#if user.current}
 		<NavUser user={data.user} />
+		{:else}
+		<Button href="/login" variant="outline" class="flex items-center gap-2">
+            <KeyRoundIcon class="w-4 h-4" />
+            Login
+        </Button>
+		{/if}
 	</Sidebar.Footer>
 </Sidebar.Root>
