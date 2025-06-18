@@ -86,20 +86,20 @@
     };
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+<div class="min-h-screen py-8">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-slate-900 mb-3">Create Lending Agreement</h1>
-            <p class="text-lg text-slate-600">Create a new tool lending agreement</p>
+            <h1 class="text-4xl font-bold  mb-3">Create Lending Agreement</h1>
+            <p class="text-lg ">Create a new tool lending agreement</p>
             <Badge variant="secondary" class="mt-2">Agreement Creation</Badge>
         </div>
 
         <!-- Form Card -->
         <Card.Root class="shadow-xl border-0">
             <Card.Header class="text-center pb-6">
-                <Card.Title class="text-2xl font-semibold text-slate-800">Agreement Details</Card.Title>
-                <Card.Description class="text-slate-600">
+                <Card.Title class="text-2xl font-semibold ">Agreement Details</Card.Title>
+                <Card.Description class="">
                     Please fill in the required information to create the lending agreement
                 </Card.Description>
             </Card.Header>
@@ -108,7 +108,7 @@
                 <form class="space-y-6">
                     <!-- Tool Field -->
                     <div class="space-y-3">
-                        <Label for="tool" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="tool" class="text-sm font-semibold  flex items-center gap-2">
                             Tool 
                             <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                         </Label>
@@ -133,7 +133,7 @@
 
                     <!-- Borrower Field -->
                     <div class="space-y-3">
-                        <Label for="borrower" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="borrower" class="text-sm font-semibold  flex items-center gap-2">
                             Borrower
                             <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                         </Label>
@@ -158,7 +158,7 @@
 
                     <!-- Lent At Field -->
                     <div class="space-y-3">
-                        <Label for="lent-at" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="lent-at" class="text-sm font-semibold  flex items-center gap-2">
                             Lent At
                             <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                         </Label>
@@ -175,7 +175,7 @@
 
                     <!-- Due At Field -->
                     <div class="space-y-3">
-                        <Label for="due-at" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="due-at" class="text-sm font-semibold  flex items-center gap-2">
                             Due At
                             <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                         </Label>
@@ -201,7 +201,7 @@
                 
                 <Separator />
                 
-                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                <div class="flex items-center justify-center gap-2 text-sm ">
                     <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                     <span>fields must be completed</span>
                 </div>

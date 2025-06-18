@@ -83,29 +83,26 @@
 
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8">
+<div class="min-h-screen py-8">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header Section -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-slate-900 mb-3">Register New Tool</h1>
-            <p class="text-lg text-slate-600">Add a new tool to your inventory system</p>
+            <h1 class="text-4xl font-bold mb-3">Register New Tool</h1>
+            <p class="text-lg">Add a new tool to your inventory system</p>
             <Badge variant="secondary" class="mt-2">Tool Registration</Badge>
         </div>
 
-        <!-- Form Card -->
         <Card.Root class="shadow-xl border-0">
             <Card.Header class="text-center pb-6">
-                <Card.Title class="text-2xl font-semibold text-slate-800">Tool Details</Card.Title>
-                <Card.Description class="text-slate-600">
+                <Card.Title class="text-2xl font-semibold">Tool Details</Card.Title>
+                <Card.Description>
                     Please fill in the required information to register your tool
                 </Card.Description>
             </Card.Header>
             
             <Card.Content>
                 <form class="space-y-6">
-                    <!-- Tool Name Field -->
                     <div class="space-y-3">
-                        <Label for="tool-name" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="tool-name" class="text-sm font-semiboldflex items-center gap-2">
                             Tool Name 
                             <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                         </Label>
@@ -121,9 +118,8 @@
 
                     <Separator />
 
-                    <!-- Serial Number Field -->
                     <div class="space-y-3">
-                        <Label for="serial-number" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="serial-number" class="text-sm font-semiboldflex items-center gap-2">
                             Serial Number
                             <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                         </Label>
@@ -139,9 +135,8 @@
 
                     <Separator />
 
-                    <!-- Tool Type Field -->
                     <div class="space-y-3">
-                        <Label for="tooltype" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="tooltype" class="text-sm font-semibold flex items-center gap-2">
                             Tool Type
                             <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                         </Label>
@@ -164,9 +159,8 @@
 
                     <Separator />
 
-                    <!-- Status Field -->
                     <div class="space-y-3">
-                        <Label for="status" class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <Label for="status" class="text-sm font-semibold flex items-center gap-2">
                             Initial Status
                             <Badge variant="outline" class="text-xs px-1 py-0">Optional</Badge>
                         </Label>
@@ -200,7 +194,7 @@
                 
                 <Separator />
                 
-                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                <div class="flex items-center justify-center gap-2 text-sm">
                     <Badge variant="destructive" class="text-xs px-1 py-0">Required</Badge>
                     <span>fields must be completed</span>
                 </div>

@@ -4,7 +4,6 @@
     import Button from "$lib/components/ui/button/button.svelte";
     import Input from "$lib/components/ui/input/input.svelte";
     import { user } from "$lib/functions/user.svelte";
-    import type { UserDto } from "$lib/generated/tool-tracker";
     import Label from "$lib/components/ui/label/label.svelte";
 
     let name: string | undefined = $state(user.current?.name || undefined);
