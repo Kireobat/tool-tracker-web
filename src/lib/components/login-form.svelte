@@ -124,7 +124,7 @@
 				<Label for="confirm-password-{id}">Confirm Password</Label>
 				<Input id="confirm-password-{id}" type="password" required bind:value={confirmPassword}/>
 			</div>
-			<Button type="submit" class="w-full" onclick={handleLogin}  href="javascript:void(0);">Register</Button>
+			<Button type="submit" class="w-full" onclick={handleRegister}  href="javascript:void(0);">Register</Button>
 		</div>
 		<div class="text-center text-sm">
 			Already have an account?
